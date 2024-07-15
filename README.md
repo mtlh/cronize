@@ -1,4 +1,4 @@
-<img width="60%" src="https://raw.githubusercontent.com/mtlh/cronize/main/public/cronizelogo.png?raw=true">
+<img width="10%" src="https://raw.githubusercontent.com/mtlh/cronize/main/public/cronizelogo.png?raw=true">
 
 # Cronize
 
