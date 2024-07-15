@@ -2,26 +2,31 @@
 
 # Cronize
 
-### Cronize is a web-app for managing different cronjobs split by project.
+Cronize is a web-app for managing different cronjobs split by project.
 
 ## Installation
 
 1.  Clone the repo
 
-    ```ts
+    ```console
         git clone https://github.com/mtlh/cronize.git
     ```
 
 2.  Install dependencies
 
-    ```ts
+    ```console
         npm install
     ```
 
 3.  Run the app
 
-    ```ts
+    ```console
         npm run dev
     ```
 
 4.  View the app at http://localhost:4321
+
+## Screenshots
+
+### Home/Index
+<img width="60%" src="https://raw.githubusercontent.com/mtlh/cronize/main/public/home_screenshot.png?raw=true">
