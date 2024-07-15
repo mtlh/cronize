@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Header from '../components/Header.astro'
+import Footer from '../components/Footer.astro'
+import LoginSignup from '../components/LoginSignup'
+---
+
+<BaseLayout
+  title="Cronize - Home"
+  description="Cronize is a simple, easy to use, and free cronjob manager."
+>
+  <Header />
+  <LoginSignup client:load />
+  <Footer />
+</BaseLayout>

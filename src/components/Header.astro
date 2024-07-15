@@ -1,0 +1,41 @@
+---
+import { buttonVariants } from '../components/ui/button';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import TopNavbar from '../components/TopNavbar';
+
+// @ts-ignore
+import { getImage } from "astro:assets";
+const optimizedImage = await getImage({
+  src: "/cronizelogo_light.png",
+  format: "webp",
+  width: "160",
+  height: "auto"
+});
+
+---
+
+<header
+  class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+>
+  <div
+    class="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0"
+  >
+    <div class="flex gap-6 md:gap-10">
+      <a href="/" class="flex items-center space-x-2">
+        <img
+          id="nav-logo"
+          src={optimizedImage.src}
+          width={optimizedImage.attributes.width}
+          height={optimizedImage.attributes.height}
+          alt="Cronize Logo"
+        />
+      </a>
+    </div>
+    <div class="flex flex-1 items-center justify-end space-x-4">
+      <nav class="flex items-center space-x-1">
+        <TopNavbar client:load />
+        <ThemeToggle />
+      </nav>
+    </div>
+  </div>
+</header>
