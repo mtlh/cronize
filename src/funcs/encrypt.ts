@@ -2,8 +2,6 @@ import * as crypto from 'crypto';
 import * as bcrypt from 'bcryptjs';
 import * as base64 from 'base64-js';
 
-const SESSION_KEY = process.env.SESSION_KEY || '';
-
 // Encrypt using bcrypt
 export async function encrypt(str: string): Promise<string> {
     try {
@@ -28,7 +26,7 @@ export async function encryptCheck(str: string, hashedStr: string): Promise<bool
 // Encrypt with AES-GCM using a private key
 export async function encryptWithPrivateKey(data: string): Promise<string> {
     try {
-        const key = Buffer.from(SESSION_KEY, 'base64');
+        const key = Buffer.from(import.meta.env.SESSION_KEY, 'base64');
         const iv = crypto.randomBytes(12);
         const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
         const encrypted = Buffer.concat([iv, cipher.update(data, 'utf8'), cipher.final()]);
@@ -43,7 +41,7 @@ export async function encryptWithPrivateKey(data: string): Promise<string> {
 // Decrypt with AES-GCM using a private key
 export async function decryptWithPrivateKey(encryptedData: string): Promise<string> {
     try {
-        const key = Buffer.from(SESSION_KEY, 'base64');
+        const key = Buffer.from(import.meta.env.SESSION_KEY, 'base64');
         const data = Buffer.from(encryptedData, 'base64');
         const iv = data.slice(0, 12);
         const tag = data.slice(data.length - 16);
