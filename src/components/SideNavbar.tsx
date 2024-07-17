@@ -46,14 +46,14 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               <a
-                href="#"
+                href="/profile"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
               >
                 <Home className="h-4 w-4" />
                 Profile
               </a>
               <a
-                href="#"
+                href="/playground"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
               >
                 <PlayCircle className="h-4 w-4" />
@@ -79,21 +79,21 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
                 </CollapsibleContent>
               </Collapsible>
               <a
-                href="#"
+                href="/addproject"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
               >
                 <Plus className="h-4 w-4" />
                 Add Project
               </a>
               <a
-                href="#"
+                href="/settings"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
               >
                 <Settings className="h-4 w-4" />
                 Settings
               </a>
               <a
-                href="#"
+                href="/api/logout"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
               >
                 <LogOut className="h-4 w-4" />

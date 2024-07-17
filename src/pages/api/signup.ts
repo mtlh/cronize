@@ -1,5 +1,5 @@
 import createSession from '@/funcs/createSession';
-import loginProcess from '@/funcs/login';
+import signupProcess from '@/funcs/signup';
 import type { APIRoute } from 'astro'
 
 export const POST: APIRoute = async ({ request, redirect }) => {
@@ -8,17 +8,23 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     
     const email = body.get('email')
     const password = body.get('password')
+    const confirmpassword = body.get('confpassword')
+    const username = body.get('username')
 
-    console.log(email, password)
+    console.log(email, password, confirmpassword, username)
 
-    const [status, message] = await loginProcess(email!.toString(), password!.toString())
+    // check if passwords match
+    if (password !== confirmpassword) {
+        return redirect('/signup')
+    }
 
+    const [status, message] = await signupProcess(email!.toString(), password!.toString(), username!.toString())
     console.log(status, message)
 
     if (status === "0") {
-        return redirect('/login')
+        return redirect('/')
     } else {
-        
+
         // create a new session
         const sessionKey = await createSession(status)
 

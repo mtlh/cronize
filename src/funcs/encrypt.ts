@@ -1,12 +1,12 @@
-import * as crypto from 'crypto';
-import * as bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import * as base64 from 'base64-js';
+import * as argon2 from 'argon2';
+import CryptoJS from 'crypto-js';
 
 // Encrypt using bcrypt
 export async function encrypt(str: string): Promise<string> {
     try {
-        const salt = await bcrypt.genSalt(10);
-        const hashedStr = await bcrypt.hash(str, salt);
+        const hashedStr = await argon2.hash(str);
         return hashedStr;
     } catch (err) {
         throw err;
@@ -16,7 +16,7 @@ export async function encrypt(str: string): Promise<string> {
 // Check encrypted string using bcrypt
 export async function encryptCheck(str: string, hashedStr: string): Promise<boolean> {
     try {
-        const isMatch = await bcrypt.compare(str, hashedStr);
+        const isMatch = await argon2.verify(hashedStr, str);
         return isMatch;
     } catch (err) {
         return false;
@@ -25,34 +25,14 @@ export async function encryptCheck(str: string, hashedStr: string): Promise<bool
 
 // Encrypt with AES-GCM using a private key
 export async function encryptWithPrivateKey(data: string): Promise<string> {
-    try {
-        const key = Buffer.from(import.meta.env.SESSION_KEY, 'base64');
-        const iv = crypto.randomBytes(12);
-        const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-        const encrypted = Buffer.concat([iv, cipher.update(data, 'utf8'), cipher.final()]);
-        const tag = cipher.getAuthTag();
-        const encryptedData = Buffer.concat([iv, encrypted, tag]).toString('base64');
-        return encryptedData;
-    } catch (err) {
-        throw err;
-    }
+    return CryptoJS.AES.encrypt(data, import.meta.env.SESSION_KEY).toString();
 }
+
 
 // Decrypt with AES-GCM using a private key
 export async function decryptWithPrivateKey(encryptedData: string): Promise<string> {
-    try {
-        const key = Buffer.from(import.meta.env.SESSION_KEY, 'base64');
-        const data = Buffer.from(encryptedData, 'base64');
-        const iv = data.slice(0, 12);
-        const tag = data.slice(data.length - 16);
-        const encrypted = data.slice(12, data.length - 16);
-        const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
-        decipher.setAuthTag(tag);
-        const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-        return decrypted.toString('utf8');
-    } catch (err) {
-        throw err;
-    }
+    const bytes = CryptoJS.AES.decrypt(encryptedData, import.meta.env.SESSION_KEY);
+    return bytes.toString(CryptoJS.enc.Utf8);
 }
 
 // Generate a random string

@@ -5,12 +5,13 @@ import ThemeToggle from '../components/ThemeToggle.astro';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "../components/ui/card"
-import { Button } from "../components/ui/button";
+
+const data: any = Astro.locals;
+console.log(data)
+
 ---
 
 <BaseLayout
@@ -22,7 +23,7 @@ import { Button } from "../components/ui/button";
     </div>
     <SideNavbar client:load >
         <div class="grid items-center gap-4">
-            <h1 class="text-lg font-semibold md:text-2xl">Hi USERNAME!</h1>
+            <h1 class="text-xl font-semibold md:text-2xl italic">Welcome {data.username}!</h1>
             <div class="grid grid-cols-4 gap-4">
                 <Card>
                     <CardHeader>

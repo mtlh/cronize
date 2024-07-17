@@ -1,5 +1,5 @@
 import { connectdb } from "@/db/connect"
-import { encryptWithPrivateKey } from "./encrypt"
+import { encrypt } from "./encrypt"
 
 export default async function signupProcess( email: string, password: string, username: string): Promise<string[]> {
 
@@ -13,12 +13,12 @@ export default async function signupProcess( email: string, password: string, us
     }
 
     // encrypt password
-    const newPass = await encryptWithPrivateKey(password)
+    const newPass = await encrypt(password)
     // insert user into database
     const insertUser = await connectdb().execute({
         sql: `INSERT INTO User (email, password, username) VALUES (?, ?, ?)`,
         args: [email, newPass, username]
     })
 
-    return [insertUser.rows[0].id!.toString(), "complete"]
+    return [insertUser.lastInsertRowid!.toString(), "complete"]
 }

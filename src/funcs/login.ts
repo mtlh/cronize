@@ -1,5 +1,5 @@
 import { connectdb } from "@/db/connect"
-import { decryptWithPrivateKey } from "./encrypt"
+import { decryptWithPrivateKey, encryptCheck } from "./encrypt"
 
 export default async function loginProcess( email: string, password: string): Promise<string[]> {
 
@@ -9,18 +9,18 @@ export default async function loginProcess( email: string, password: string): Pr
         args: [email]
     })
 
-    console.log(isEmail)
+    // console.log(isEmail)
 
     if (isEmail.rows.length === 0) {
         return ["0", "email does not exist"]
     }
 
     // check password against database record
-    const dbPass = await decryptWithPrivateKey(isEmail.rows[0].password!.toString())
+    const isPassValid = await encryptCheck(isEmail.rows[0].password!.toString(), password)
 
-    if (dbPass !== password) {
+    if (isPassValid) {
         return ["0", "incorrect password"]
     } else {
-        return ["1", "success"]
+        return [isEmail.rows[0].id!.toString(), "success"]
     }
 }

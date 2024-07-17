@@ -24,7 +24,7 @@ export interface User {
 //     session_key TEXT NOT NULL,
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-//     FOREIGN KEY (user_id) REFERENCES Users (id) ON DELETE CASCADE
+//     FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
 // );
 
 export interface Session {
