@@ -1,0 +1,124 @@
+---
+
+import SideNavbar from "../components/SideNavbar"
+import BaseLayout from "../layouts/BaseLayout.astro"
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { LoadingSpinner } from "../components/ui/loadingspinner";
+
+const data: any = Astro.locals;
+console.log(data)
+
+---
+
+<BaseLayout
+  title="Cronize - Playground"
+  description="Cronize is a simple, easy to use, and free cronjob manager."
+>
+    <div class="hidden">
+        <ThemeToggle />
+    </div>
+    <SideNavbar client:load >
+        <div class="flex flex-col items-center justify-center min-h-screen bg-background">
+            <div class="max-w-5xl w-full p-6 rounded-lg shadow-lg bg-card">
+              <h1 class="text-2xl font-bold mb-4 text-card-foreground">Request Testing Playground</h1>
+              <form class="space-y-4">
+                <div>
+                  <label for="url" class="block mb-1 text-sm font-medium text-card-foreground">
+                    URL
+                  </label>
+                  <Input
+                    id="playgroundUrl"
+                    type="text"
+                    placeholder="Enter a URL"
+                    className="w-full px-3 py-2 rounded-md border border-input text-card-foreground bg-card focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  />
+                </div>
+                <Button
+                  className="w-full px-4 py-2 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  id="handlePlaygroundSubmit"
+                  type="button"
+                >
+                  <p id="playgroundSubmitText">Test Cronjob</p>
+                  <LoadingSpinner />
+                </Button>
+              </form>
+              <div class="mt-8 space-y-4">
+                <div class="bg-muted rounded-md p-4">
+                  <h2 class="text-lg font-medium mb-2 text-card-foreground">Response</h2>
+                  <div class="text-sm text-muted-foreground">
+                    <p id="playgroundResponseStatusCode">Status Code: 200 OK</p>
+                    <p>
+                      Response Body: <span class="font-mono">{"message"}: 'Cronjob executed successfully'</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="bg-muted rounded-md p-4">
+                  <h2 class="text-lg font-medium mb-2 text-card-foreground">History</h2>
+                  <div class="text-sm text-muted-foreground">
+                    <ul class="space-y-2">
+                      <li>
+                        <div class="flex justify-between">
+                          <span>https://example.com/cronjob</span>
+                          <span class="text-green-500">200 OK</span>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex justify-between">
+                          <span>https://example.com/cronjob</span>
+                          <span class="text-red-500">404 Not Found</span>
+                        </div>
+                      </li>
+                      <li>
+                        <div class="flex justify-between">
+                          <span>https://example.com/cronjob</span>
+                          <span class="text-green-500">200 OK</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+    </SideNavbar>
+</BaseLayout>
+
+<script>
+
+  const tgt = document.querySelector("#handlePlaygroundSubmit");
+  tgt!.addEventListener("click", async (e) => {
+    // @ts-ignore
+    const url = document.querySelector("#playgroundUrl")!.value;
+    if (url) {
+      console.log(url);
+
+      // Set loading state to true
+      // @ts-ignore
+      document.getElementById("handlePlaygroundSubmit")!.disabled = true;
+      document.getElementById("playgroundSubmitSpinner")!.classList.remove("hidden");
+      document.getElementById("playgroundSubmitText")!.classList.add("hidden");
+
+      try {
+        // Make the request
+        const response = await fetch(url);
+        console.log(response);
+
+        document.getElementById("playgroundResponseStatusCode")!.innerText = `Status Code: ${response.status}`;
+
+      } catch (error) {
+        console.error(error);
+
+        document.getElementById("playgroundResponseStatusCode")!.innerText = `Status Code: 500 (error during request)`;
+      }
+
+      // update default UI states
+      // @ts-ignore
+      document.getElementById("handlePlaygroundSubmit")!.disabled = false;
+      document.getElementById("playgroundSubmitSpinner")!.classList.add("hidden");
+      document.getElementById("playgroundSubmitText")!.classList.remove("hidden");
+
+    }
+  });
+</script>
