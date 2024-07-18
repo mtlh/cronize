@@ -130,7 +130,7 @@ import HistoryComponent from "../components/PlaygroundHistory";
       const ul = document.getElementById('playgroundHistory')!;
       const li = document.createElement('li');
       const div = document.createElement('div');
-      div.className = 'grid grid-cols-9 gap-x-4 gap-y-2';
+      div.className = 'grid grid-cols-9 gap-x-4 gap-y-2 border-b border-card-foreground border-dashed';
       const spanUrl = document.createElement('span');
       spanUrl.textContent = url;
       spanUrl.className = 'font-mono font-normal text-sm col-span-6';

@@ -22,7 +22,7 @@ const ListComponent = () => {
         const result = await response.json();
         setData(result);
         if (page === 1) {
-          setPageLimit(Math.max(result[0].total_history_records/10, 1));
+          setPageLimit(Math.max(Math.ceil(result[0].total_history_records/10), 1));
         }
       } catch (err: any) {
         setError(err.message);
@@ -44,7 +44,7 @@ const ListComponent = () => {
   return (
     <div>
       {error && <p>Error: {error}</p>}
-      <ul className="min-h-60" id="playgroundHistory">
+      <ul className="min-h-52" id="playgroundHistory">
         {loading && <LoadingSpinnerPlaygroundHistoryContent />}
         {data.map((item) => (
           <li key={item.id} className="grid grid-cols-9 gap-x-4 gap-y-2">

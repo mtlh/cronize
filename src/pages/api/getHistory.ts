@@ -30,6 +30,17 @@ export const GET: APIRoute = async ({ request }) => {
             args: [validSession.user_id, (page - 1) * 10]
         })
 
+        for (const row of history.rows) {
+            const timestamp = row.created_at;
+            if (typeof timestamp === 'string' || typeof timestamp === 'number' || timestamp instanceof Date) {
+                row.created_at = new Date(timestamp).toLocaleString();
+            } else if (typeof timestamp === 'bigint') {
+                row.created_at = new Date(Number(timestamp)).toLocaleString();
+            } else {
+                row.created_at = 'Invalid date';
+            }
+        }
+        
         return new Response(JSON.stringify(history.rows), {
             status: 200,
         });
