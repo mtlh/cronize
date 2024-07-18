@@ -40,3 +40,20 @@ export interface UserSession {
     username: string | null;
     user_id: number | null;
 }
+
+// CREATE TABLE IF NOT EXISTS PlaygroundHistory (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     user_id INTEGER NOT NULL,
+//     url TEXT NOT NULL,
+//     status TEXT NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+// );
+
+export interface PlaygroundHistoryList {
+    id: number,
+    url: string;
+    status: string;
+    created_at: string;
+    total_history_records: number;
+}

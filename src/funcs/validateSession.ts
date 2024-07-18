@@ -4,7 +4,7 @@ import { connectdb } from "@/db/connect";
 
 export default async function validateSession(request: Request): Promise<UserSession> {
     const sessionToken = request.headers.get('Cookie')?.split(';').find(cookie => cookie.startsWith('sessionToken=') || cookie.startsWith(' sessionToken='))?.split('=')[1] + "=";
-    console.log(sessionToken)
+    // console.log(sessionToken)
 
     if (sessionToken) {
         // get session from database with matching token
@@ -14,7 +14,7 @@ export default async function validateSession(request: Request): Promise<UserSes
             args: [decryptedSession]
         })
 
-        console.log(session)
+        // console.log(session)
 
         if (session.rows.length > 0) {
             return {

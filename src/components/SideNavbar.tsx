@@ -23,7 +23,7 @@ interface SideNavbarProps {
   }
   
 const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
-    const [isProjectsOpen, setIsProjectsOpen] = useState(false);
+    const [isProjectsOpen, setIsProjectsOpen] = useState(true);
     return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -155,13 +155,13 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
                       </div>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="CollapsibleContent">
-                      {[1, 2, 3, 4, 5, 6].map((item, index) => (
-                          <div key={index} className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42">
-                              <Home className="h-4 w-4" />
-                              Project Name
-                          </div>
-                      ))}
-                  </CollapsibleContent>
+                    {[1, 2, 3, 4, 5, 6].map((item, index) => (
+                        <div key={index} className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42">
+                            <Home className="h-4 w-4" />
+                            Project Name
+                        </div>
+                    ))}
+                </CollapsibleContent>
                 </Collapsible>
                 <a
                   href="#"

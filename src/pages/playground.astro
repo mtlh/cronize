@@ -5,10 +5,8 @@ import BaseLayout from "../layouts/BaseLayout.astro"
 import ThemeToggle from '../components/ThemeToggle.astro';
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { LoadingSpinner } from "../components/ui/loadingspinner";
-
-const data: any = Astro.locals;
-console.log(data)
+import { LoadingSpinnerPlaygroundButton } from "../components/ui/loadingspinner";
+import HistoryComponent from "../components/PlaygroundHistory";
 
 ---
 
@@ -20,7 +18,7 @@ console.log(data)
         <ThemeToggle />
     </div>
     <SideNavbar client:load >
-        <div class="flex flex-col items-center justify-center min-h-screen bg-background">
+        <div class="flex flex-col items-center min-h-screen bg-background">
             <div class="max-w-5xl w-full p-6 rounded-lg shadow-lg bg-card">
               <h1 class="text-2xl font-bold mb-4 text-card-foreground">Request Testing Playground</h1>
               <form class="space-y-4">
@@ -40,43 +38,28 @@ console.log(data)
                   id="handlePlaygroundSubmit"
                   type="button"
                 >
-                  <p id="playgroundSubmitText">Test Cronjob</p>
-                  <LoadingSpinner />
+                  <p id="playgroundSubmitText">Test Request</p>
+                  <LoadingSpinnerPlaygroundButton />
                 </Button>
               </form>
               <div class="mt-8 space-y-4">
                 <div class="bg-muted rounded-md p-4">
                   <h2 class="text-lg font-medium mb-2 text-card-foreground">Response</h2>
                   <div class="text-sm text-muted-foreground">
-                    <p id="playgroundResponseStatusCode">Status Code: 200 OK</p>
-                    <p>
-                      Response Body: <span class="font-mono">{"message"}: 'Cronjob executed successfully'</span>
+                    <p class="mr-2 font-semibold text-lg">Status Code:
+                      <br />
+                      <span class="font-mono font-normal text-sm" id="playgroundResponseStatusCode"></span>
+                    </p>
+                    <p class="mr-2 font-semibold text-lg">Response Body:
+                      <br />
+                      <span class="font-mono font-normal text-sm" id="playgroundResponseBody"></span>
                     </p>
                   </div>
                 </div>
                 <div class="bg-muted rounded-md p-4">
                   <h2 class="text-lg font-medium mb-2 text-card-foreground">History</h2>
                   <div class="text-sm text-muted-foreground">
-                    <ul class="space-y-2">
-                      <li>
-                        <div class="flex justify-between">
-                          <span>https://example.com/cronjob</span>
-                          <span class="text-green-500">200 OK</span>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="flex justify-between">
-                          <span>https://example.com/cronjob</span>
-                          <span class="text-red-500">404 Not Found</span>
-                        </div>
-                      </li>
-                      <li>
-                        <div class="flex justify-between">
-                          <span>https://example.com/cronjob</span>
-                          <span class="text-green-500">200 OK</span>
-                        </div>
-                      </li>
-                    </ul>
+                    <HistoryComponent client:load />
                   </div>
                 </div>
               </div>
@@ -91,6 +74,8 @@ console.log(data)
   tgt!.addEventListener("click", async (e) => {
     // @ts-ignore
     const url = document.querySelector("#playgroundUrl")!.value;
+
+    let status = 500;
     if (url) {
       console.log(url);
 
@@ -103,15 +88,34 @@ console.log(data)
       try {
         // Make the request
         const response = await fetch(url);
+        status = response.status;
         console.log(response);
 
-        document.getElementById("playgroundResponseStatusCode")!.innerText = `Status Code: ${response.status}`;
+        document.getElementById("playgroundResponseStatusCode")!.innerText = `${status}`;
+        document.getElementById("playgroundResponseBody")!.innerText = `${await response.text()}`;
+
+        createListItem(url, `${status}`);
 
       } catch (error) {
+
         console.error(error);
+        createListItem(url, status.toString());
 
         document.getElementById("playgroundResponseStatusCode")!.innerText = `Status Code: 500 (error during request)`;
+        document.getElementById("playgroundResponseBody")!.innerText = ``;
       }
+
+      // Save history record (request /api/addHistory)
+      fetch('/api/addHistory', {
+        method: 'POST',
+        body: new URLSearchParams({
+          url: url,
+          status: status.toString()
+        }),
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      });
 
       // update default UI states
       // @ts-ignore
@@ -121,4 +125,25 @@ console.log(data)
 
     }
   });
+
+  function createListItem(url, status) {
+      const ul = document.getElementById('playgroundHistory')!;
+      const li = document.createElement('li');
+      const div = document.createElement('div');
+      div.className = 'grid grid-cols-9 gap-x-4 gap-y-2';
+      const spanUrl = document.createElement('span');
+      spanUrl.textContent = url;
+      spanUrl.className = 'font-mono font-normal text-sm col-span-6';
+      const spanStatus = document.createElement('span');
+      if (status.startsWith('2')) { spanStatus.className = 'text-green-500'; } else { spanStatus.className = 'text-red-500';}
+      spanStatus.textContent = status;
+      const spanTime = document.createElement('span');
+      spanTime.className = 'italic col-span-2';
+      spanTime.textContent = new Date().toLocaleString();
+      div.appendChild(spanUrl);
+      div.appendChild(spanStatus);
+      div.appendChild(spanTime);
+      li.appendChild(div);
+      ul.insertBefore(li, ul.firstChild);
+    }
 </script>
