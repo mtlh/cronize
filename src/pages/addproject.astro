@@ -1,0 +1,83 @@
+---
+import SideNavbar from "../components/SideNavbar"
+import BaseLayout from "../layouts/BaseLayout.astro"
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../components/ui/card";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+import { Textarea } from "../components/ui/textarea";
+
+const error = Astro.url.searchParams.get("error");
+console.log(error)
+---
+
+<BaseLayout
+  title="Cronize - Add Project"
+  description="Cronize is a simple, easy to use, and free cronjob manager."
+>
+    <div class="hidden">
+        <ThemeToggle />
+    </div>
+    <SideNavbar client:load >
+        <Card className="w-full max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Add New Project</CardTitle>
+              <CardDescription>Fill out the details below to create a new project.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form class="grid gap-4">
+                <div class="grid gap-2">
+                  <Label htmlFor="name">Project Name</Label>
+                  <Input id="name" placeholder="Enter project name" />
+                </div>
+                <div class="grid gap-2">
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea id="description" placeholder="Describe your project" />
+                </div>
+              </form>
+              <button class="w-full px-4 py-2 mt-4 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                 type="button" id="handleAddProjectSubmit">
+                Create Project
+              </button>
+            </CardContent>
+            <CardFooter className="flex">
+              {error == "true" && 
+                <p class="text-red-500 font-semibold">Project creation failed.</p>
+              }
+              {error == "false" && 
+                <p class="text-green-500 font-semibold">Project created successfully.</p>
+              }
+            </CardFooter>
+          </Card>
+    </SideNavbar>
+</BaseLayout>
+
+<script>
+    const tgt = document.getElementById("handleAddProjectSubmit");
+
+    tgt!.addEventListener("click", async (e) => {
+        e.preventDefault();
+
+        // @ts-ignore
+        const name = document.querySelector("#name")!.value; const description = document.querySelector("#description")!.value;
+
+        if (name && description) {
+            const response = await fetch('/api/addProject', {
+                method: 'POST',
+                body: new URLSearchParams({
+                    name: name,
+                    description: description
+                }),
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            console.log(response);
+            if (await response.text() == "s") {
+                window.location.href = "/addproject?error=false";
+            } else {
+                window.location.href = "/addproject?error=true";
+            }
+        }
+    });
+</script>

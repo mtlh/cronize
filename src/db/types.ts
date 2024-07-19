@@ -57,3 +57,21 @@ export interface PlaygroundHistoryList {
     created_at: string;
     total_history_records: number;
 }
+
+// CREATE TABLE IF NOT EXISTS Project (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     user_id INTEGER NOT NULL,
+//     name TEXT NOT NULL,
+//     description TEXT NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+// );
+
+export interface Project {
+    id: number;
+    name: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}

@@ -1,29 +1,35 @@
 import {
   Home,
   Menu,
-  ArrowBigDown, ArrowBigUp, Settings, LogOut,
+  Settings, LogOut,
   Plus,
   PlayCircle
 } from "lucide-react"
 
-import { Badge } from "../components/ui/badge"
 import { Button } from "../components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet"
-import { useState, type ReactNode } from "react"
-
-import {
-    Collapsible,
-    CollapsibleContent,
-    CollapsibleTrigger,
-  } from "@/components/ui/collapsible"
-
+import { useEffect, useState, type ReactNode } from "react"
+import type { Project } from "@/db/types";
 
 interface SideNavbarProps {
     children: ReactNode;
   }
   
 const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
-    const [isProjectsOpen, setIsProjectsOpen] = useState(true);
+
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            const response = await fetch('/api/getProject');
+            const data = await response.json();
+            setProjects(data);
+            setLoading(false);
+        }
+        fetchProjects();
+    }, []);
+
     return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -59,25 +65,15 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
                 <PlayCircle className="h-4 w-4" />
                 Playground
               </a>
-              <Collapsible>
-                <CollapsibleTrigger>
-                    <div className="flex w-full min-w-48 items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary font-semibold hover:bg-muted" onClick={() => setIsProjectsOpen(!isProjectsOpen)}>
-                        {isProjectsOpen ? <ArrowBigUp className="h-4 w-4" /> : <ArrowBigDown className="h-4 w-4" />}
-                        Projects
-                        <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                            6
-                        </Badge>
-                    </div>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="CollapsibleContent">
-                    {[1, 2, 3, 4, 5, 6].map((item, index) => (
-                        <div key={index} className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42">
-                            <Home className="h-4 w-4" />
-                            Project Name
-                        </div>
-                    ))}
-                </CollapsibleContent>
-              </Collapsible>
+              {projects.map((project, index) => (
+                  <a key={index} 
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
+                    href={`/project/${project.id}`}
+                  >
+                      <Home className="h-4 w-4" />
+                      {project.name}
+                  </a>
+              ))}
               <a
                 href="/addproject"
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
@@ -144,25 +140,15 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
                   <PlayCircle className="h-4 w-4" />
                   Playground
                 </a>
-                <Collapsible>
-                  <CollapsibleTrigger>
-                      <div className="flex w-42 items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary font-semibold hover:bg-muted" onClick={() => setIsProjectsOpen(!isProjectsOpen)}>
-                          {isProjectsOpen ? <ArrowBigUp className="h-4 w-4" /> : <ArrowBigDown className="h-4 w-4" />}
-                          Projects
-                          <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                              6
-                          </Badge>
-                      </div>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="CollapsibleContent">
-                    {[1, 2, 3, 4, 5, 6].map((item, index) => (
-                        <div key={index} className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42">
-                            <Home className="h-4 w-4" />
-                            Project Name
-                        </div>
-                    ))}
-                </CollapsibleContent>
-                </Collapsible>
+                {projects.map((project, index) => (
+                  <a key={index} 
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
+                    href={`/project/${project.id}`}
+                  >
+                      <Home className="h-4 w-4" />
+                      {project.name}
+                  </a>
+                ))}
                 <a
                   href="#"
                   className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
