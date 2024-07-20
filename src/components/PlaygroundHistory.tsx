@@ -20,9 +20,14 @@ const ListComponent = () => {
           throw new Error('Failed to fetch data');
         }
         const result = await response.json();
-        setData(result);
-        if (page === 1) {
+        console.log(result);
+        if (result.length > 0) {
+          setData(result);
+        }
+        if (page === 1 && result.length > 0) {
           setPageLimit(Math.max(Math.ceil(result[0].total_history_records/10), 1));
+        } else {
+          setPageLimit(1);
         }
       } catch (err: any) {
         setError(err.message);

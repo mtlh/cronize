@@ -9,6 +9,8 @@ import { Textarea } from "../components/ui/textarea";
 
 const error = Astro.url.searchParams.get("error");
 console.log(error)
+
+const data: any = Astro.locals;
 ---
 
 <BaseLayout
@@ -18,7 +20,7 @@ console.log(error)
     <div class="hidden">
         <ThemeToggle />
     </div>
-    <SideNavbar client:load >
+    <SideNavbar client:load username={data.username}>
         <Card className="w-full max-w-md mx-auto">
             <CardHeader>
               <CardTitle>Add New Project</CardTitle>

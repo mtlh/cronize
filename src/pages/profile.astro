@@ -21,7 +21,7 @@ console.log(data)
     <div class="hidden">
         <ThemeToggle />
     </div>
-    <SideNavbar client:load >
+    <SideNavbar client:load username={data.username}>
         <div class="grid items-center gap-4">
             <h1 class="text-xl font-semibold md:text-2xl italic">Welcome {data.username}!</h1>
             <div class="grid grid-cols-4 gap-4">

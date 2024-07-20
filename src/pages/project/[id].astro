@@ -1,0 +1,22 @@
+---
+import SideNavbar from "../../components/SideNavbar"
+import BaseLayout from "../../layouts/BaseLayout.astro"
+import ThemeToggle from '../../components/ThemeToggle.astro';
+import ProjectInfo from "../../components/ProjectInfo"
+
+const data: any = Astro.locals;
+const id = parseInt(Astro.params.id || '0');
+
+---
+
+<BaseLayout
+  title="Cronize - Profile"
+  description="Cronize is a simple, easy to use, and free cronjob manager."
+>
+    <div class="hidden">
+        <ThemeToggle />
+    </div>
+    <SideNavbar client:load username={data.username}>
+        <ProjectInfo client:load id={id} />
+    </SideNavbar>
+</BaseLayout>

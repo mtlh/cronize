@@ -25,12 +25,12 @@ export default function Component() {
 
 function LoginForm() {
   function DemoLogin() {
-    var usernameInput = document.getElementById("username");
+    var usernameInput = document.getElementById("email");
     var passwordInput = document.getElementById("password");
     var submitButton = document.getElementById("loginsubmit");
     if (usernameInput && passwordInput && submitButton) {
         // @ts-ignore
-        passwordInput.value = "testing"; usernameInput.value = "testing";
+        passwordInput.value = "demouser"; usernameInput.value = "demo@gmail.com";
         submitButton.click();
     } else {
         console.error("One or more login elements not found.");

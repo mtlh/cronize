@@ -3,7 +3,10 @@ import {
   Menu,
   Settings, LogOut,
   Plus,
-  PlayCircle
+  PlayCircle,
+  Rocket,
+  UserCircle,
+  Folder
 } from "lucide-react"
 
 import { Button } from "../components/ui/button"
@@ -13,9 +16,10 @@ import type { Project } from "@/db/types";
 
 interface SideNavbarProps {
     children: ReactNode;
+    username: string; 
   }
   
-const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
+const SideNavbar: React.FC<SideNavbarProps> = ({ children, username }) => {
 
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
@@ -50,51 +54,60 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
             </Button> */}
           </div>
           <div className="flex-1">
-            <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <a
-                href="/profile"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-              >
-                <Home className="h-4 w-4" />
-                Profile
-              </a>
-              <a
-                href="/playground"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-              >
-                <PlayCircle className="h-4 w-4" />
-                Playground
-              </a>
-              {projects.map((project, index) => (
-                  <a key={index} 
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                    href={`/project/${project.id}`}
-                  >
-                      <Home className="h-4 w-4" />
-                      {project.name}
-                  </a>
-              ))}
-              <a
-                href="/addproject"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-              >
-                <Plus className="h-4 w-4" />
-                Add Project
-              </a>
-              <a
-                href="/settings"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </a>
-              <a
-                href="/api/logout"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </a>
+            <nav className="flex flex-col h-full px-2 text-sm font-medium lg:px-4">
+              <div className="pb-1 pt-2 font-light text-muted-foreground">
+                PLAYGROUND
+                <a
+                  href="/playground"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                >
+                  <Rocket className="h-6 w-6" />
+                  Sandbox
+                </a>
+              </div>
+              <div className="pb-1 pt-2 font-light text-muted-foreground">
+                PROJECTS
+                <a
+                  href="/addproject"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                >
+                  <Plus className="h-6 w-6" />
+                  Add Project
+                </a>
+                {projects.map((project, index) => (
+                    <a key={index} 
+                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                      href={`/project/${project.id}`}
+                    >
+                        <Folder className="h-6 w-6" />
+                        {project.name}
+                    </a>
+                ))}
+              </div>
+              <div className="pt-2 font-light text-muted-foreground mt-auto pb-6 border-t">
+                PROFILE
+                <a
+                  href="/profile"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                >
+                  <UserCircle className="h-6 w-6" />
+                  {username}
+                </a>
+                <a
+                  href="/settings"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                >
+                  <Settings className="h-6 w-6" />
+                  Settings
+                </a>
+                <a
+                  href="/api/logout"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                >
+                  <LogOut className="h-6 w-6" />
+                  Logout
+                </a>
+              </div>
             </nav>
           </div>
         </div>
@@ -113,63 +126,60 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children }) => {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <nav className="grid gap-2 text-lg font-medium">
-                <a
-                  href="#"
-                  className="flex items-center gap-2 text-lg font-semibold pt-2 pb-4"
-                >
-                  <img
-                    id="sidebar-logo-togglemenu"
-                    src="/cronizelogo_light.png"
-                    width="160"
-                    height="auto"
-                    alt="Cronize Logo"
-                    />
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                >
-                  <Home className="h-4 w-4" />
-                  Profile
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                >
-                  <PlayCircle className="h-4 w-4" />
-                  Playground
-                </a>
-                {projects.map((project, index) => (
-                  <a key={index} 
-                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                    href={`/project/${project.id}`}
+              <nav className="flex flex-col h-full px-2 text-md font-medium lg:px-4">
+                <div className="pb-1 pt-2 font-light text-muted-foreground">
+                  PLAYGROUND
+                  <a
+                    href="/playground"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-semibold transition-all hover:text-primary hover:bg-muted w-42"
                   >
-                      <Home className="h-4 w-4" />
-                      {project.name}
+                    <Rocket className="h-6 w-6" />
+                    Sandbox
                   </a>
-                ))}
-                <a
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Project
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                >
-                  <Settings className="h-4 w-4" />
-                  Settings
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary hover:bg-muted w-42"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </a>
+                </div>
+                <div className="pb-1 pt-2 font-light text-muted-foreground">
+                  PROJECTS
+                  <a
+                    href="/addproject"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                  >
+                    <Plus className="h-6 w-6" />
+                    Add Project
+                  </a>
+                  {projects.map((project, index) => (
+                      <a key={index} 
+                        className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                        href={`/project/${project.id}`}
+                      >
+                          <Folder className="h-6 w-6" />
+                          {project.name}
+                      </a>
+                  ))}
+                </div>
+                <div className="pt-2 font-light text-muted-foreground mt-auto pb-6 border-t">
+                  PROFILE
+                  <a
+                    href="/profile"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                  >
+                    <UserCircle className="h-6 w-6" />
+                    {username}
+                  </a>
+                  <a
+                    href="/settings"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                  >
+                    <Settings className="h-6 w-6" />
+                    Settings
+                  </a>
+                  <a
+                    href="/api/logout"
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                  >
+                    <LogOut className="h-6 w-6" />
+                    Logout
+                  </a>
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
