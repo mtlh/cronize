@@ -75,3 +75,41 @@ export interface Project {
     created_at: string;
     updated_at: string;
 }
+
+// CREATE TABLE IF NOT EXISTS Cronjob (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     project_id INTEGER NOT NULL,
+//     name TEXT NOT NULL,
+//     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     interval TEXT NOT NULL,
+//     daily_time TEXT NOT NULL,
+//     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
+// );
+
+export interface Cronjob {
+    id: number;
+    project_id: number;
+    name: string;
+    created_at: string;
+    updated_at: string;
+    interval: string;
+    daily_time: string;
+    last_run_time: string;
+    last_run_status: string;
+}
+
+// CREATE TABLE IF NOT EXISTS CronjobHistory (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     cronjob_id INTEGER NOT NULL,
+//     status TEXT NOT NULL,
+//     ran_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+//     FOREIGN KEY (cronjob_id) REFERENCES Cronjob(id) ON DELETE CASCADE
+// );
+
+export interface CronjobHistory {
+    id: number;
+    cronjob_id: number;
+    status: string;
+    ran_time: string;
+}
