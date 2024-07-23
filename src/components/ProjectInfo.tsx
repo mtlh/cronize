@@ -1,44 +1,15 @@
-import type {Project } from '@/db/types';
+import type { ProjectInfo } from '@/db/types';
 import { useState, useEffect } from 'react';
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { TrendingUp } from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card"
-import {
-  type ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "../components/ui/chart"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
+import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../components/ui/chart"
 import { Button } from './ui/button';
-import { navigate } from 'astro:transitions/client';
-
-const cronjobs = [
-  {
-      id: 1,
-      name: "cronjob-1",
-      dailyTime: "10:00:00 AM",
-      interval: "daily",
-      lastRunTime: "2023-07-20 10:00:00 AM",
-      lastRunStatus: "200",
-  }
-]
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group"
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80, other: 45 },
@@ -65,9 +36,11 @@ const chartConfig = {
 } satisfies ChartConfig
 
 const ListComponent = ({id}: {id: number}) => {
-  const [data, setData] = useState<Project>();
+  const [data, setData] = useState<ProjectInfo>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [selectedInterval, setSelectedInterval] = useState('weekly');
+  const [selectedRequestType, setSelectedRequestType] = useState('get');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,7 +51,7 @@ const ListComponent = ({id}: {id: number}) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
-        const result = await response.json();
+        const result: ProjectInfo = await response.json();
         console.log(result);
         setData(result);
       } catch (err: any) {
@@ -90,6 +63,32 @@ const ListComponent = ({id}: {id: number}) => {
     fetchData();
   }, []);
 
+  async function handleCreateCronjob(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    // console.log(selectedInterval, data?.id, document.getElementById('url')?.value, document.getElementById('name')?.value, document.getElementById('interval')?.value, document.getElementById('daily_time_date')?.value, document.getElementById('daily_time_time')?.value)
+    const formData = new FormData();
+    // @ts-ignore
+    formData.append('url', document.getElementById('url')?.value.toString());
+    // @ts-ignore
+    formData.append('project_id', data?.id.toString());
+    // @ts-ignore
+    formData.append('name', document.getElementById('name')?.value.toString());
+    formData.append('interval', selectedInterval);
+    formData.append('request_type', selectedRequestType);
+    // @ts-ignore
+    formData.append('daily_time', document.getElementById('daily_time_date')?.value.toString() + ' ' + document.getElementById('daily_time_time')?.value.toString());
+    const request = await fetch('/api/addCron', {
+      method: 'POST',
+      body: formData,
+    })
+    if (request.status === 200) {
+      alert('Cronjob created successfully!');
+      window.location.reload();
+    } else {
+      alert('Failed to create cronjob');
+    }
+  }
+
   return (
     <div className="grid items-center gap-4">
         <h1 className="font-semibold italic text-4xl">{data?.name}</h1>
@@ -98,29 +97,121 @@ const ListComponent = ({id}: {id: number}) => {
             <TableHeader>
                 <TableRow>
                   <TableHead className="w-[400px]">Cronjob Name</TableHead>
-                  <TableHead>Daily Time</TableHead>
+                  <TableHead>Start/Run Time</TableHead>
                   <TableHead>Interval</TableHead>
                   <TableHead>Last Run Time</TableHead>
                   <TableHead >Last Run Status</TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {cronjobs.map((cron) => (
+                {data?.cronjobs.map((cron) => (
                 <TableRow key={cron.id}>
                     <TableCell className="font-semibold text-blue-600">
                       <a href={`/cronjob/${cron.id}`} className="hover:underline">
                         {cron.name}
                       </a>
                     </TableCell>
-                    <TableCell>{cron.dailyTime}</TableCell>
+                    <TableCell>{cron.daily_time}</TableCell>
                     <TableCell>{cron.interval}</TableCell>
-                    <TableCell>{cron.lastRunTime}</TableCell>
-                    <TableCell>{cron.lastRunStatus}</TableCell>
+                    <TableCell>{cron.last_run_time || '-'}</TableCell>
+                    <TableCell>{cron.last_run_status || '-'}</TableCell>
                 </TableRow>
                 ))}
-                <Button className='w-full my-3' onClick={() => navigate('/cronjob/create')}>Create Cronjob</Button>
             </TableBody>
         </Table>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className='w-full'>Create Cronjob</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px]">
+            <form className="grid gap-4 py-4" onSubmit={handleCreateCronjob}>
+              <DialogHeader>
+                <DialogTitle>Create Cronjob</DialogTitle>
+                <DialogDescription>
+                  Create a new cronjob for your project - {data?.name}. All these fields are required and can be updated at any time. You can also update the request headers, and body once it is created.
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="name" className="text-right w-32">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    defaultValue="Cronjob"
+                  />
+                </div>
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="url" className="text-right w-32">
+                    Request URL
+                  </Label>
+                  <Input
+                    id="url"
+                    defaultValue="https://cronize.mtlh.dev/api/hello"
+                  />
+                </div>
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="request_type" className="text-right w-32">
+                    Request Method
+                  </Label>
+                  <RadioGroup defaultValue={selectedRequestType} id="request_type" onValueChange={(value) => setSelectedRequestType(value)}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="get" id="get" />
+                      <Label htmlFor="get">GET</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="post" id="post" />
+                      <Label htmlFor="post">POST</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="delete" id="delete" />
+                      <Label htmlFor="delete">DELETE</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="interval" className="text-right w-32">
+                    Interval
+                  </Label>
+                  <RadioGroup defaultValue={selectedInterval} id="interval" onValueChange={(value) => setSelectedInterval(value)}>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="weekly" id="weekly" />
+                      <Label htmlFor="weekly">Weekly</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="daily" id="daily" />
+                      <Label htmlFor="daily">Daily</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="hourly" id="hourly" />
+                      <Label htmlFor="hourly">Hourly</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="single" id="single" />
+                      <Label htmlFor="single">One-off</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                <div className="flex items-center gap-4">
+                  <Label htmlFor="daily_time" className="text-right w-32">
+                    Starting/Run Time
+                  </Label>
+                  <input aria-label="Date" type="date" defaultValue={new Date().toISOString().split('T')[0]} id='daily_time_date' className="w-full rounded-md border-0 bg-transparent py-2 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-none" />
+                  <input
+                      aria-label="Time"
+                      type="time"
+                      defaultValue={new Date().toLocaleTimeString('en-UK', { hour12: false })}
+                      id='daily_time_time'
+                      className="w-full rounded-md border-0 bg-transparent py-2 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-none"
+                    />                
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Create</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
         <Card className='w-96 h-96'>
           <CardHeader>
             <CardTitle>Area Chart - Stacked Expanded</CardTitle>

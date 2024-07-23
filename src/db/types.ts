@@ -79,17 +79,28 @@ export interface Project {
 // CREATE TABLE IF NOT EXISTS Cronjob (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
 //     project_id INTEGER NOT NULL,
+//     url TEXT NOT NULL,
 //     name TEXT NOT NULL,
+//     request_type TEXT NOT NULL,
+//     request_headers TEXT ,
+//     request_body TEXT,
 //     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 //     interval TEXT NOT NULL,
 //     daily_time TEXT NOT NULL,
+//     last_run_time DATETIME,
+//     last_run_status TEXT,
 //     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 // );
+
 
 export interface Cronjob {
     id: number;
     project_id: number;
+    request_type: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS" | "CONNECT" | "TRACE";
+    request_headers?: string;
+    request_body?: string;
+    url: string;
     name: string;
     created_at: string;
     updated_at: string;
@@ -112,4 +123,22 @@ export interface CronjobHistory {
     cronjob_id: number;
     status: string;
     ran_time: string;
+}
+
+// CREATE TRIGGER update_cronjob_last_run
+// AFTER INSERT ON CronjobHistory
+// FOR EACH ROW
+// BEGIN
+//     UPDATE Cronjob
+//     SET last_run_time = NEW.ran_time, last_run_status = NEW.status
+//     WHERE id = NEW.cronjob_id;
+// END;
+
+export type ProjectInfo = {
+    id: number;
+    name: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+    cronjobs: Cronjob[];
 }
