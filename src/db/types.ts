@@ -97,7 +97,7 @@ export interface Project {
 export interface Cronjob {
     id: number;
     project_id: number;
-    request_type: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS" | "CONNECT" | "TRACE";
+    request_type: string;
     request_headers?: string;
     request_body?: string;
     url: string;
