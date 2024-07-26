@@ -1,5 +1,5 @@
 import type { Cronjob } from '@/db/types';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ChangeEvent } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -11,12 +11,12 @@ import { SelectValue, Select, SelectContent, SelectItem, SelectTrigger, SelectGr
 const ListComponent = ({id}: {id: number}) => {
   const [data, setData] = useState<Cronjob>();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setError(null);
+      setError('');
       try {
         const response = await fetch(`/api/getCron?id=${id}`);
         if (!response.ok) {
@@ -37,7 +37,7 @@ const ListComponent = ({id}: {id: number}) => {
   const [cronName, setCronName] = useState(data?.name);
   const [cronUrl, setCronUrl] = useState(data?.url);
   const [cronRequestType, setCronRequestType] = useState(data?.request_type);
-  const [cronRequestHeaders, setCronRequestHeaders] = useState(data?.request_headers);
+  const [cronRequestHeaders, setCronRequestHeaders] = useState<Array<{key: string, value: string}>>(JSON.parse(data?.request_headers?.toString() || '[]'));
   const [cronRequestBody, setCronRequestBody] = useState(data?.request_body);
   const [cronInterval, setCronInterval] = useState(data?.interval);
   const [cronDailyTime, setCronDailyTime] = useState(data?.daily_time);
@@ -48,7 +48,7 @@ const ListComponent = ({id}: {id: number}) => {
     setCronName(data?.name);
     setCronUrl(data?.url);
     setCronRequestType(data?.request_type);
-    setCronRequestHeaders(data?.request_headers);
+    setCronRequestHeaders(JSON.parse(data?.request_headers?.toString() || '[]'));
     setCronRequestBody(data?.request_body);
     setCronInterval(data?.interval);
     setCronDailyTime(data?.daily_time);
@@ -58,11 +58,16 @@ const ListComponent = ({id}: {id: number}) => {
 
   function handleUpdateCron() {
     const formdata = new FormData();
+    formdata.append('id', data!.id.toString());
     formdata.append('name', cronName!.toString());
     formdata.append('url', cronUrl!.toString());
     formdata.append('request_type', cronRequestType!.toString());
-    formdata.append('request_headers', cronRequestHeaders!.toString());
-    formdata.append('request_body', cronRequestBody!.toString());
+    formdata.append('request_headers', JSON.stringify(cronRequestHeaders!));
+    try {
+      formdata.append('request_body', cronRequestBody!.toString());
+    } catch {
+      formdata.append('request_body', '');
+    }
     formdata.append('interval', cronInterval!.toString());
     formdata.append('daily_time', cronDailyTime!.toString());
     fetch('/api/updateCron', {
@@ -72,12 +77,12 @@ const ListComponent = ({id}: {id: number}) => {
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
-      return response.json();
+      return response.text();
     }).then((data) => {
-      console.log(data);
-      setData(data);
+      setError("Updated Cron.");
     }).catch((error) => {
       console.error('Error:', error);
+      setError("Failed to update Cron.");
     });
   }
 
@@ -103,6 +108,23 @@ const ListComponent = ({id}: {id: number}) => {
   function handleTestCron() {
     console.log('test cron');
   }
+
+  const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+    const values = [...cronRequestHeaders];
+    // @ts-ignore
+    values[index][event.target.name] = event.target.value;
+    setCronRequestHeaders(values);
+  };
+
+  const handleAddFields = () => {
+    setCronRequestHeaders([...cronRequestHeaders, { key: '', value: '' }]);
+  };
+
+  const handleRemoveFields = (index: number) => {
+    const values = [...cronRequestHeaders];
+    values.splice(index, 1);
+    setCronRequestHeaders(values);
+  };
 
   return (
     <div className="grid items-center gap-4">
@@ -174,12 +196,39 @@ const ListComponent = ({id}: {id: number}) => {
               </div>
               <div className='md:col-span-2'>
                 <Label>Request Headers</Label>
-                <Textarea
-                  value={cronRequestHeaders}
-                  onChange={(e) => setCronRequestHeaders(e.target.value)}
-                  placeholder="Request Headers"
-                  className='w-full text-lg p-2 border border-gray-300 rounded-md'
-                />
+                {cronRequestHeaders.map((input, index) => (
+                  <div key={index} className='flex gap-x-6'>
+                    <Input
+                      type="text"
+                      name="key"
+                      placeholder="Key"
+                      value={input.key}
+                      onChange={(event) => handleInputChange(index, event)}
+                    />
+                    <Input
+                      type="text"
+                      name="value"
+                      placeholder="Value"
+                      value={input.value}
+                      onChange={(event) => handleInputChange(index, event)}
+                    />
+                    <Button
+                      type="button"
+                      className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
+                      onClick={() => handleRemoveFields(index)}
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                ))}
+                <div>
+                  <Button
+                    type="button"
+                    onClick={() => handleAddFields()}
+                  >
+                    Add
+                  </Button>
+                </div>
               </div>
               <div className='md:col-span-2'>
                 <Label>Request Body</Label>
