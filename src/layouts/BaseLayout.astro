@@ -19,7 +19,7 @@ const { title, description, ogImage } = Astro.props
     <div class="relative flex min-h-screen flex-col">
       <main class="flex-auto">
         <slot />
-        <Toaster />
+        <Toaster client:load />
       </main>
     </div>
   </body>
