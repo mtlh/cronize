@@ -19,6 +19,12 @@ const ListComponent = ({id}: {id: number}) => {
   const [saveLoading, setSaveLoading] = useState(true);
   const [loadingTest, setLoadingTest] = useState(false);
 
+  const [testUrl, setTestUrl] = useState('');
+  const [testStatus, setTestStatus] = useState('');
+  const [testResponse, setTestResponse] = useState('');
+  const [testError, setTestError] = useState('');
+  const [didTestError, setDidTestError] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -130,34 +136,44 @@ const ListComponent = ({id}: {id: number}) => {
 
   function handleTestCron() {
     setLoadingTest(true);
-    fetch(cronUrl!.toString(), {
+    const headers = cronRequestHeaders.reduce((acc, curr) => {
+      // @ts-ignore
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {});
+    const options = {
       method: cronRequestType!.toString().toUpperCase(),
-      headers: cronRequestHeaders.reduce((acc, curr) => {
-        // @ts-ignore
-        acc[curr.key] = curr.value;
-        return acc;
-      }, {}),
-      body: cronRequestBody!,
-    }).then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      return response.text();
-    }).then(() => {
-      toast({
-        title: "Test Cron",
-        description: "Cron tested successfully.",
+      headers: headers,
+    };
+    // Only include the body for methods that allow it
+    if (options.method !== 'GET' && options.method !== 'HEAD') {
+      // @ts-ignore
+      options.body = cronRequestBody!;
+    }
+    fetch(cronUrl!.toString(), options)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return response;
+      })
+      .then(async (res) => {
+        setDidTestError(false);
+        setTestUrl(res.url);
+        setTestStatus(res.status.toString());
+        setTestResponse(await res.text());
+        setTimeout(() => {
+          setLoadingTest(false);
+        }, 200);
+      })
+      .catch((error) => {
+        setDidTestError(true);
+        setTestError(error.message);
+        setTimeout(() => {
+          setLoadingTest(false);
+        }, 200);
       });
-      setLoadingTest(false);
-    }).catch((error) => {
-      console.error('Error:', error);
-      toast({
-        title: "Test Cron",
-        description: "Failed to test cron.",
-      });
-      setLoadingTest(false);
-    });
-  }
+  }  
 
   const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
     const values = [...cronRequestHeaders];
@@ -197,7 +213,7 @@ const ListComponent = ({id}: {id: number}) => {
                   <DialogTrigger asChild>
                     <Button onClick={handleTestCron} className='mt-4 bg-black hover:bg-black/80 border text-white font-bold py-2 px-4 rounded'><ShieldCheck /> Test</Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-[600px]">
+                  <DialogContent className="sm:max-w-[800px]">
                     <DialogTitle>Test Cronjob</DialogTitle>
                     <DialogDescription>
                       Test your cronjob to see if it works. This will send a test request to your cronjob's URL.
@@ -205,7 +221,25 @@ const ListComponent = ({id}: {id: number}) => {
                     {loadingTest ?
                       <LoaderCircle className='animate-spin w-20 h-20 text-orange-400 m-auto' />
                       :
-                      <p>Test</p>
+                      <>
+                        {didTestError ?
+                          <div className='flex flex-col gap-4'>
+                            <p className='flex gap-4'>Error:</p>
+                            <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testError}</p>
+                          </div>
+                          :
+                          <div className='flex flex-col gap-4'>
+                            <div className='flex flex-col gap-4'>
+                              <p className='flex gap-4'>URL:</p>
+                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testUrl}</p>
+                              <p className='flex gap-4'>Status:</p>
+                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testStatus}</p>
+                              <p className='flex gap-4'>Response:</p>
+                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testResponse}</p>
+                            </div>
+                          </div>
+                        }
+                      </>
                     }
                   </DialogContent>
                 </Dialog>
