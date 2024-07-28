@@ -4,7 +4,7 @@ import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
-import { Delete, DeleteIcon, LoaderCircle, Save, ShieldCheck, Trash2 } from 'lucide-react';
+import { ArrowLeft, Delete, DeleteIcon, LoaderCircle, Save, ShieldCheck, SkipBack, Trash2 } from 'lucide-react';
 import { Textarea } from './ui/textarea';
 import { SelectValue, Select, SelectContent, SelectItem, SelectTrigger, SelectGroup, SelectLabel } from './ui/select';
 import { useToast } from "@/components/ui/use-toast"
@@ -200,172 +200,184 @@ const ListComponent = ({id}: {id: number}) => {
         </div>
         :
         <>
-          <Card className="w-full p-4 bg-white shadow-lg rounded-lg max-w-6xl m-auto">
-            <CardContent>
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
-                {data?.created_at && (
-                  <p className='text-lg font-semibold mt-4 py-2'>
-                    Created - {new Date(data?.created_at).toLocaleString()}
-                  </p>
-                )}
-                <div className='flex justify-end gap-6'>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button onClick={handleTestCron} className='mt-4 bg-black hover:bg-black/80 border text-white font-bold py-2 px-4 rounded'><ShieldCheck /> Test</Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[800px]">
-                    <DialogTitle>Test Cronjob</DialogTitle>
-                    <DialogDescription>
-                      Test your cronjob to see if it works. This will send a test request to your cronjob's URL.
-                    </DialogDescription>
-                    {loadingTest ?
-                      <LoaderCircle className='animate-spin w-20 h-20 text-orange-400 m-auto' />
-                      :
-                      <>
-                        {didTestError ?
-                          <div className='flex flex-col gap-4'>
-                            <p className='flex gap-4'>Error:</p>
-                            <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testError}</p>
-                          </div>
-                          :
-                          <div className='flex flex-col gap-4'>
+          <div className='max-w-6xl mx-auto'>
+            <div className='grid grid-cols-3 gap-6 py-2'>
+              <a href={'/project/' + data?.project_id} className='text-sm font-thin flex text-left'>
+                <ArrowLeft className='w-5 h-5 pr-1' /> Back to Project
+              </a>
+              <div></div>
+              <div className='flex justify-end'>
+                <button onClick={handleDeleteCron} className='text-sm font-thin flex'>
+                  Delete <Trash2 className='w-5 h-5 pl-1' />
+                </button>
+              </div>
+            </div>
+            <Card className="w-full p-4 bg-white shadow-lg rounded-lg">
+              <CardContent>
+                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                  {data?.created_at && (
+                    <p className='text-lg font-semibold mt-4 py-2'>
+                      Created - {new Date(data?.created_at).toLocaleString()}
+                    </p>
+                  )}
+                  <div className='flex justify-end gap-6'>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button onClick={handleTestCron} className='mt-4 bg-black hover:bg-black/80 border text-white font-bold py-2 px-4 rounded w-28'><ShieldCheck /> Test</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[800px]">
+                      <DialogTitle>Test Cronjob</DialogTitle>
+                      <DialogDescription>
+                        Test your cronjob to see if it works. This will send a test request to your cronjob's URL.
+                      </DialogDescription>
+                      {loadingTest ?
+                        <LoaderCircle className='animate-spin w-20 h-20 text-orange-400 m-auto' />
+                        :
+                        <>
+                          {didTestError ?
                             <div className='flex flex-col gap-4'>
-                              <p className='flex gap-4'>URL:</p>
-                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testUrl}</p>
-                              <p className='flex gap-4'>Status:</p>
-                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testStatus}</p>
-                              <p className='flex gap-4'>Response:</p>
-                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testResponse}</p>
+                              <p className='flex gap-4'>Error:</p>
+                              <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testError}</p>
                             </div>
-                          </div>
-                        }
-                      </>
+                            :
+                            <div className='flex flex-col gap-4'>
+                              <div className='flex flex-col gap-4'>
+                                <p className='flex gap-4'>URL:</p>
+                                <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testUrl}</p>
+                                <p className='flex gap-4'>Status:</p>
+                                <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testStatus}</p>
+                                <p className='flex gap-4'>Response:</p>
+                                <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testResponse}</p>
+                              </div>
+                            </div>
+                          }
+                        </>
+                      }
+                    </DialogContent>
+                  </Dialog>
+                    {saveLoading ?
+                      <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28' disabled><LoaderCircle className='animate-spin' /></Button>
+                      :
+                      <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28'><Save /> Save</Button>
                     }
-                  </DialogContent>
-                </Dialog>
-                  {saveLoading ?
-                    <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' disabled><LoaderCircle className='animate-spin' /></Button>
-                    :
-                    <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'><Save /> Save</Button>
-                  }
-                  <Button onClick={handleDeleteCron} className='mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'><Trash2 /> Delete</Button>
-                </div>
-                <div className='md:col-span-2'>
-                  <Label>Name</Label>
-                  <Input
-                    value={cronName}
-                    onChange={(e) => setCronName(e.target.value)}
-                    placeholder="Cron Name"
-                    className='w-full text-2xl p-2 border border-gray-300 rounded-md' />
-                </div>
-                <div className='md:col-span-2'>
-                  <Label>URL</Label>
-                  <Input
-                    value={cronUrl}
-                    onChange={(e) => setCronUrl(e.target.value)}
-                    placeholder="Cron URL"
-                    className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                </div>
-                <div className='md:col-span-2'>
-                  <Label>Request Type</Label>
-                  {cronRequestType != undefined ?
-                    <Select defaultValue={cronRequestType} onValueChange={(value) => setCronRequestType(value)}>
-                      <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Select a request type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="get">GET</SelectItem>
-                          <SelectItem value="post">POST</SelectItem>
-                          <SelectItem value="put">PUT</SelectItem>
-                          <SelectItem value="delete">DELETE</SelectItem>
-                          <SelectItem value="patch">PATCH</SelectItem>
-                          <SelectItem value="connect">CONNECT</SelectItem>
-                          <SelectItem value="head">HEAD</SelectItem>
-                          <SelectItem value="options">OPTIONS</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    :
-                    <Select defaultValue="get" onValueChange={(value) => setCronRequestType(value)}>
-                      <SelectTrigger className="w-[200px]">
-                        <SelectValue placeholder="Select a request type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="get">GET</SelectItem>
-                          <SelectItem value="post">POST</SelectItem>
-                          <SelectItem value="put">PUT</SelectItem>
-                          <SelectItem value="delete">DELETE</SelectItem>
-                          <SelectItem value="patch">PATCH</SelectItem>
-                          <SelectItem value="connect">CONNECT</SelectItem>
-                          <SelectItem value="head">HEAD</SelectItem>
-                          <SelectItem value="options">OPTIONS</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>}
-                </div>
-                <div className='md:col-span-2'>
-                  <Label>Request Headers</Label>
-                  {cronRequestHeaders.map((input, index) => (
-                    <div key={index} className='flex gap-6 py-1'>
-                      <Input
-                        type="text"
-                        name="key"
-                        placeholder="Key"
-                        value={input.key}
-                        onChange={(event) => handleInputChange(index, event)} />
-                      <Input
-                        type="text"
-                        name="value"
-                        placeholder="Value"
-                        value={input.value}
-                        onChange={(event) => handleInputChange(index, event)} />
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>Name</Label>
+                    <Input
+                      value={cronName}
+                      onChange={(e) => setCronName(e.target.value)}
+                      placeholder="Cron Name"
+                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>URL</Label>
+                    <Input
+                      value={cronUrl}
+                      onChange={(e) => setCronUrl(e.target.value)}
+                      placeholder="Cron URL"
+                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>Request Type</Label>
+                    {cronRequestType != undefined ?
+                      <Select defaultValue={cronRequestType} onValueChange={(value) => setCronRequestType(value)}>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Select a request type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="get">GET</SelectItem>
+                            <SelectItem value="post">POST</SelectItem>
+                            <SelectItem value="put">PUT</SelectItem>
+                            <SelectItem value="delete">DELETE</SelectItem>
+                            <SelectItem value="patch">PATCH</SelectItem>
+                            <SelectItem value="connect">CONNECT</SelectItem>
+                            <SelectItem value="head">HEAD</SelectItem>
+                            <SelectItem value="options">OPTIONS</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                      :
+                      <Select defaultValue="get" onValueChange={(value) => setCronRequestType(value)}>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Select a request type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="get">GET</SelectItem>
+                            <SelectItem value="post">POST</SelectItem>
+                            <SelectItem value="put">PUT</SelectItem>
+                            <SelectItem value="delete">DELETE</SelectItem>
+                            <SelectItem value="patch">PATCH</SelectItem>
+                            <SelectItem value="connect">CONNECT</SelectItem>
+                            <SelectItem value="head">HEAD</SelectItem>
+                            <SelectItem value="options">OPTIONS</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>}
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>Request Headers</Label>
+                    {cronRequestHeaders.map((input, index) => (
+                      <div key={index} className='flex gap-6 py-1'>
+                        <Input
+                          type="text"
+                          name="key"
+                          placeholder="Key"
+                          value={input.key}
+                          onChange={(event) => handleInputChange(index, event)} />
+                        <Input
+                          type="text"
+                          name="value"
+                          placeholder="Value"
+                          value={input.value}
+                          onChange={(event) => handleInputChange(index, event)} />
+                        <Button
+                          type="button"
+                          className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
+                          onClick={() => handleRemoveFields(index)}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                    <div className='flex'>
                       <Button
                         type="button"
-                        className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
-                        onClick={() => handleRemoveFields(index)}
+                        onClick={() => handleAddFields()}
                       >
-                        Remove
+                        Add
                       </Button>
                     </div>
-                  ))}
-                  <div className='flex py-4'>
-                    <Button
-                      type="button"
-                      onClick={() => handleAddFields()}
-                    >
-                      Add
-                    </Button>
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>Request Body</Label>
+                    <Textarea
+                      value={cronRequestBody}
+                      onChange={(e) => setCronRequestBody(e.target.value)}
+                      placeholder="Request Body"
+                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>Interval</Label>
+                    <Input
+                      value={cronInterval}
+                      onChange={(e) => setCronInterval(e.target.value)}
+                      placeholder="Interval"
+                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                  </div>
+                  <div className='md:col-span-2'>
+                    <Label>Daily Time</Label>
+                    <Input
+                      value={cronDailyTime}
+                      onChange={(e) => setCronDailyTime(e.target.value)}
+                      placeholder="Daily Time"
+                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
                   </div>
                 </div>
-                <div className='md:col-span-2'>
-                  <Label>Request Body</Label>
-                  <Textarea
-                    value={cronRequestBody}
-                    onChange={(e) => setCronRequestBody(e.target.value)}
-                    placeholder="Request Body"
-                    className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                </div>
-                <div className='md:col-span-2'>
-                  <Label>Interval</Label>
-                  <Input
-                    value={cronInterval}
-                    onChange={(e) => setCronInterval(e.target.value)}
-                    placeholder="Interval"
-                    className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                </div>
-                <div className='md:col-span-2'>
-                  <Label>Daily Time</Label>
-                  <Input
-                    value={cronDailyTime}
-                    onChange={(e) => setCronDailyTime(e.target.value)}
-                    placeholder="Daily Time"
-                    className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </>
       }
     </>

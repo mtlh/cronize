@@ -25,6 +25,7 @@ export const GET: APIRoute = async ({ request }) => {
                 c.created_at AS cronjob_created_at, 
                 c.updated_at AS cronjob_updated_at, 
                 c.interval, 
+                c.request_type,
                 c.daily_time, 
                 c.last_run_time, 
                 c.last_run_status
@@ -96,7 +97,7 @@ export const GET: APIRoute = async ({ request }) => {
             // get cronjobs
             for (const cronjob of projects.rows) {
                 Project.cronjobs.push({
-                    id: parseInt(cronjob.cronjob_id  as string),
+                    id: parseInt(cronjob.cronjob_id as string),
                     project_id: parseInt(cronjob.project_id as string),
                     name: cronjob.cronjob_name?.toString() || '',
                     url: cronjob.url?.toString() || '',
@@ -106,6 +107,7 @@ export const GET: APIRoute = async ({ request }) => {
                     daily_time: cronjob.daily_time?.toString() || '',
                     last_run_time: cronjob.last_run_time?.toString() || '',
                     last_run_status: cronjob.last_run_status?.toString() || '',
+                    request_type: cronjob.request_type?.toString() || '',
                 });
             }
 
