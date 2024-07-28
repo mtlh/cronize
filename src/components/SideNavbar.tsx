@@ -6,7 +6,9 @@ import {
   PlayCircle,
   Rocket,
   UserCircle,
-  Folder
+  Folder,
+  Loader,
+  LoaderCircle
 } from "lucide-react"
 
 import { Button } from "../components/ui/button"
@@ -29,7 +31,9 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children, username }) => {
             const response = await fetch('/api/getProject');
             const data = await response.json();
             setProjects(data);
-            setLoading(false);
+            setTimeout(() => {
+              setLoading(false);
+            }, 200);
         }
         fetchProjects();
     }, []);
@@ -74,15 +78,23 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children, username }) => {
                   <Plus className="h-6 w-6" />
                   Add Project
                 </a>
-                {projects.map((project, index) => (
-                    <a key={index} 
-                      className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
-                      href={`/project/${project.id}`}
-                    >
-                        <Folder className="h-6 w-6" />
-                        {project.name}
-                    </a>
-                ))}
+                {loading ? 
+                  <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted h-20 m-auto justify-center">
+                    <LoaderCircle className='animate-spin w-8 h-8 text-orange-400' />
+                  </div>
+                : 
+                  <>
+                    {projects.map((project, index) => (
+                        <a key={index} 
+                          className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted w-42"
+                          href={`/project/${project.id}`}
+                        >
+                            <Folder className="h-6 w-6" />
+                            {project.name}
+                        </a>
+                    ))}
+                  </>
+                }
               </div>
               <div className="pt-2 font-light text-muted-foreground mt-auto pb-6 border-t">
                 PROFILE
