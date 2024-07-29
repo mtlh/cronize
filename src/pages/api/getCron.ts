@@ -38,7 +38,13 @@ export const GET: APIRoute = async ({ request }) => {
         })
 
         if (projects.rows.length > 0) {
-            return new Response(JSON.stringify(projects.rows[0]), {
+
+            // get cronjob history
+            const history = await connectdb().execute({
+                sql: ` SELECT * FROM CronjobHistory WHERE cronjob_id = ? ORDER BY ran_time DESC LIMIT 10 `,
+                args: [id]
+            })
+            return new Response(JSON.stringify({cron: projects.rows[0], history: history.rows}), {
                 status: 200,
             });
         } else {

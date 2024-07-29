@@ -1,4 +1,4 @@
-import type { Cronjob } from '@/db/types';
+import type { Cronjob, CronjobHistory } from '@/db/types';
 import { useState, useEffect, type ChangeEvent } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Input } from './ui/input';
@@ -10,6 +10,8 @@ import { SelectValue, Select, SelectContent, SelectItem, SelectTrigger, SelectGr
 import { useToast } from "@/components/ui/use-toast"
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, Table} from './ui/table';
 
 const ListComponent = ({id}: {id: number}) => {
   const { toast } = useToast()
@@ -33,18 +35,20 @@ const ListComponent = ({id}: {id: number}) => {
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
-        const result: Cronjob = await response.json();
+        let result: {cron: Cronjob, history: CronjobHistory[]} = await response.json();
         console.log(result);
-        setCronName(result?.name);
-        setCronUrl(result?.url);
-        setCronRequestType(result?.request_type);
-        setCronRequestHeaders(JSON.parse(result?.request_headers?.toString() || '[]'));
-        setCronRequestBody(result?.request_body);
-        setCronInterval(result?.interval);
-        setCronDailyTime(result?.daily_time);
-        setCronLastRunStatus(result?.last_run_status);
-        setCronLastRunTime(result?.last_run_time);
-        setData(result);
+        const cronData = result.cron as Cronjob;
+        setCronName(cronData?.name);
+        setCronUrl(cronData?.url);
+        setCronRequestType(cronData?.request_type);
+        setCronRequestHeaders(JSON.parse(cronData?.request_headers?.toString() || '[]'));
+        setCronRequestBody(cronData?.request_body);
+        setCronInterval(cronData?.interval);
+        setCronDailyTime(cronData?.daily_time);
+        setCronLastRunStatus(cronData?.last_run_status);
+        setCronLastRunTime(cronData?.last_run_time);
+        setHistory(result.history);
+        setData(cronData);
         // timeout 200ms
         setTimeout(() => {
           setLoading(false);
@@ -71,6 +75,8 @@ const ListComponent = ({id}: {id: number}) => {
   const [cronDailyTime, setCronDailyTime] = useState(data?.daily_time);
   const [cronLastRunStatus, setCronLastRunStatus] = useState(data?.last_run_status);
   const [cronLastRunTime, setCronLastRunTime] = useState(data?.last_run_time);
+
+  const [history, setHistory] = useState<CronjobHistory[]>([]);
 
   function handleUpdateCron() {
     setSaveLoading(true);
@@ -200,7 +206,7 @@ const ListComponent = ({id}: {id: number}) => {
         </div>
         :
         <>
-          <div className='max-w-6xl mx-auto'>
+          <div className='max-w-7xl mx-auto min-w-[60%]'>
             <div className='grid grid-cols-3 gap-6 py-2'>
               <a href={'/project/' + data?.project_id} className='text-sm font-thin flex text-left'>
                 <ArrowLeft className='w-5 h-5 pr-1' /> Back to Project
@@ -261,120 +267,152 @@ const ListComponent = ({id}: {id: number}) => {
                       <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28'><Save /> Save</Button>
                     }
                   </div>
-                  <div className='md:col-span-2'>
-                    <Label>Name</Label>
-                    <Input
-                      value={cronName}
-                      onChange={(e) => setCronName(e.target.value)}
-                      placeholder="Cron Name"
-                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                  </div>
-                  <div className='md:col-span-2'>
-                    <Label>URL</Label>
-                    <Input
-                      value={cronUrl}
-                      onChange={(e) => setCronUrl(e.target.value)}
-                      placeholder="Cron URL"
-                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                  </div>
-                  <div className='md:col-span-2'>
-                    <Label>Request Type</Label>
-                    {cronRequestType != undefined ?
-                      <Select defaultValue={cronRequestType} onValueChange={(value) => setCronRequestType(value)}>
-                        <SelectTrigger className="w-[200px]">
-                          <SelectValue placeholder="Select a request type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem value="get">GET</SelectItem>
-                            <SelectItem value="post">POST</SelectItem>
-                            <SelectItem value="put">PUT</SelectItem>
-                            <SelectItem value="delete">DELETE</SelectItem>
-                            <SelectItem value="patch">PATCH</SelectItem>
-                            <SelectItem value="connect">CONNECT</SelectItem>
-                            <SelectItem value="head">HEAD</SelectItem>
-                            <SelectItem value="options">OPTIONS</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                      :
-                      <Select defaultValue="get" onValueChange={(value) => setCronRequestType(value)}>
-                        <SelectTrigger className="w-[200px]">
-                          <SelectValue placeholder="Select a request type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectItem value="get">GET</SelectItem>
-                            <SelectItem value="post">POST</SelectItem>
-                            <SelectItem value="put">PUT</SelectItem>
-                            <SelectItem value="delete">DELETE</SelectItem>
-                            <SelectItem value="patch">PATCH</SelectItem>
-                            <SelectItem value="connect">CONNECT</SelectItem>
-                            <SelectItem value="head">HEAD</SelectItem>
-                            <SelectItem value="options">OPTIONS</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>}
-                  </div>
-                  <div className='md:col-span-2'>
-                    <Label>Request Headers</Label>
-                    {cronRequestHeaders.map((input, index) => (
-                      <div key={index} className='flex gap-6 py-1'>
-                        <Input
-                          type="text"
-                          name="key"
-                          placeholder="Key"
-                          value={input.key}
-                          onChange={(event) => handleInputChange(index, event)} />
-                        <Input
-                          type="text"
-                          name="value"
-                          placeholder="Value"
-                          value={input.value}
-                          onChange={(event) => handleInputChange(index, event)} />
-                        <Button
-                          type="button"
-                          className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
-                          onClick={() => handleRemoveFields(index)}
-                        >
-                          Remove
-                        </Button>
-                      </div>
-                    ))}
-                    <div className='flex'>
-                      <Button
-                        type="button"
-                        onClick={() => handleAddFields()}
-                      >
-                        Add
-                      </Button>
-                    </div>
-                  </div>
-                  <div className='md:col-span-2'>
-                    <Label>Request Body</Label>
-                    <Textarea
-                      value={cronRequestBody}
-                      onChange={(e) => setCronRequestBody(e.target.value)}
-                      placeholder="Request Body"
-                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                  </div>
-                  <div className='md:col-span-2'>
-                    <Label>Interval</Label>
-                    <Input
-                      value={cronInterval}
-                      onChange={(e) => setCronInterval(e.target.value)}
-                      placeholder="Interval"
-                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                  </div>
-                  <div className='md:col-span-2'>
-                    <Label>Daily Time</Label>
-                    <Input
-                      value={cronDailyTime}
-                      onChange={(e) => setCronDailyTime(e.target.value)}
-                      placeholder="Daily Time"
-                      className='w-full text-lg p-2 border border-gray-300 rounded-md' />
-                  </div>
                 </div>
+                <Tabs defaultValue="details" className='py-2'>
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="details">Details</TabsTrigger>
+                    <TabsTrigger value="history">History</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="details">
+                    <div className='grid grid-cols-1 gap-2'>
+                      <div className='md:col-span-2'>
+                        <Label>Name</Label>
+                        <Input
+                          value={cronName}
+                          onChange={(e) => setCronName(e.target.value)}
+                          placeholder="Cron Name"
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                      </div>
+                      <div className='md:col-span-2'>
+                        <Label>URL</Label>
+                        <Input
+                          value={cronUrl}
+                          onChange={(e) => setCronUrl(e.target.value)}
+                          placeholder="Cron URL"
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                      </div>
+                      <div className='md:col-span-2'>
+                        <Label>Request Type</Label>
+                        {cronRequestType != undefined ?
+                          <Select defaultValue={cronRequestType} onValueChange={(value) => setCronRequestType(value)}>
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select a request type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="get">GET</SelectItem>
+                                <SelectItem value="post">POST</SelectItem>
+                                <SelectItem value="put">PUT</SelectItem>
+                                <SelectItem value="delete">DELETE</SelectItem>
+                                <SelectItem value="patch">PATCH</SelectItem>
+                                <SelectItem value="connect">CONNECT</SelectItem>
+                                <SelectItem value="head">HEAD</SelectItem>
+                                <SelectItem value="options">OPTIONS</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          :
+                          <Select defaultValue="get" onValueChange={(value) => setCronRequestType(value)}>
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select a request type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="get">GET</SelectItem>
+                                <SelectItem value="post">POST</SelectItem>
+                                <SelectItem value="put">PUT</SelectItem>
+                                <SelectItem value="delete">DELETE</SelectItem>
+                                <SelectItem value="patch">PATCH</SelectItem>
+                                <SelectItem value="connect">CONNECT</SelectItem>
+                                <SelectItem value="head">HEAD</SelectItem>
+                                <SelectItem value="options">OPTIONS</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>}
+                      </div>
+                      <div className='md:col-span-2'>
+                        <Label>Request Headers</Label>
+                        {cronRequestHeaders.map((input, index) => (
+                          <div key={index} className='flex gap-6 py-1'>
+                            <Input
+                              type="text"
+                              name="key"
+                              placeholder="Key"
+                              value={input.key}
+                              onChange={(event) => handleInputChange(index, event)} />
+                            <Input
+                              type="text"
+                              name="value"
+                              placeholder="Value"
+                              value={input.value}
+                              onChange={(event) => handleInputChange(index, event)} />
+                            <Button
+                              type="button"
+                              className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'
+                              onClick={() => handleRemoveFields(index)}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ))}
+                        <div className='flex'>
+                          <Button
+                            type="button"
+                            onClick={() => handleAddFields()}
+                          >
+                            Add
+                          </Button>
+                        </div>
+                      </div>
+                      <div className='md:col-span-2'>
+                        <Label>Request Body</Label>
+                        <Textarea
+                          value={cronRequestBody}
+                          onChange={(e) => setCronRequestBody(e.target.value)}
+                          placeholder="Request Body"
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                      </div>
+                      <div className='md:col-span-2'>
+                        <Label>Interval</Label>
+                        <Input
+                          value={cronInterval}
+                          onChange={(e) => setCronInterval(e.target.value)}
+                          placeholder="Interval"
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                      </div>
+                      <div className='md:col-span-2'>
+                        <Label>Daily Time</Label>
+                        <Input
+                          value={cronDailyTime}
+                          onChange={(e) => setCronDailyTime(e.target.value)}
+                          placeholder="Daily Time"
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                      </div>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="history">
+                    <div>
+                      <Table>
+                          <TableHeader>
+                              <TableRow>
+                                <TableHead>Run Time</TableHead>
+                                <TableHead >Status</TableHead>
+                              </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                              {history.map((history) => (
+                              <TableRow key={history.id}>
+                                  <TableCell className="font-semibold">
+                                    {new Date(history.ran_time).toLocaleString()}
+                                  </TableCell>
+                                  <TableCell>{history.status || '-'}</TableCell>
+                              </TableRow>
+                              ))}
+                          </TableBody>
+                      </Table>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
           </div>
