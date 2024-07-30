@@ -21,8 +21,8 @@ export const GET: APIRoute = async ({ request }) => {
         const abortController = new AbortController();
         const timeoutId = setTimeout(() => abortController.abort(), 8000); // 8000 ms = 8 seconds
         const requestHeaders = new Headers();
-        for (const [key, value] of Object.entries(JSON.parse(queue.rows[0].request_headers!.toString()))) {
-            requestHeaders.append(key, value as string);
+        for (const [key, value] of JSON.parse(queue.rows[0].request_headers!.toString())) {
+            requestHeaders.append(key.toString(), value.toString());
         }
         fetch(`${queue.rows[0].url}`, { signal: abortController.signal, headers: requestHeaders, method: queue.rows[0].request_method!.toString() })
         .then(res => {
