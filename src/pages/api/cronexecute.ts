@@ -20,7 +20,11 @@ export const GET: APIRoute = async ({ request }) => {
         // fetch cronjob
         const abortController = new AbortController();
         const timeoutId = setTimeout(() => abortController.abort(), 8000); // 8000 ms = 8 seconds
-        fetch(`${queue.rows[0].url}`, { signal: abortController.signal })
+        const requestHeaders = new Headers();
+        for (const [key, value] of Object.entries(JSON.parse(queue.rows[0].request_headers!.toString()))) {
+            requestHeaders.append(key, value as string);
+        }
+        fetch(`${queue.rows[0].url}`, { signal: abortController.signal, headers: requestHeaders, method: queue.rows[0].request_method!.toString() })
         .then(res => {
             if (!res.ok) {
                 throw new Error('Network response was not ok');
