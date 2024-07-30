@@ -142,3 +142,14 @@ export type ProjectInfo = {
     updated_at: string;
     cronjobs: Cronjob[];
 }
+
+// CREATE TABLE IF NOT EXISTS CronjobExecutionQueue (
+//     id INTEGER PRIMARY KEY AUTOINCREMENT,
+//     cronjob_id INTEGER NOT NULL,
+//     FOREIGN KEY (cronjob_id) REFERENCES Cronjob(id) ON DELETE CASCADE
+// );
+
+export interface CronjobExecutionQueue {
+    id: number;
+    cronjob_id: number;
+}

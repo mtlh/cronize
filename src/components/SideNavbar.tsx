@@ -79,7 +79,7 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children, username }) => {
                   Add Project
                 </a>
                 {loading ? 
-                  <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary hover:bg-muted h-20 m-auto justify-center">
+                  <div className="flex items-center gap-3 rounded-lg px-3 py-2 text-black font-medium transition-all hover:text-primary h-20 m-auto justify-center">
                     <LoaderCircle className='animate-spin w-8 h-8 text-orange-400' />
                   </div>
                 : 
