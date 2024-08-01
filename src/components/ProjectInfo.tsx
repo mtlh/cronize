@@ -2,9 +2,9 @@ import type { ProjectInfo } from '@/db/types';
 import { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { LoaderCircle, Trash2, TrendingUp } from "lucide-react"
-import { Area, AreaChart, CartesianGrid, LabelList, Pie, PieChart, PolarAngleAxis, PolarGrid, Radar, RadarChart, XAxis } from "recharts"
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, LabelList, Pie, PieChart, PolarAngleAxis, PolarGrid, Radar, RadarChart, XAxis, YAxis } from "recharts"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card"
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../components/ui/chart"
+import { type ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "../components/ui/chart"
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -44,17 +44,21 @@ const ListComponent = ({id}: {id: number}) => {
             requestTypeCounts[cron.request_type] = 1; } else {
             requestTypeCounts[cron.request_type] += 1;
           }
+          if (requestIntervalCounts[cron.interval] === undefined) {
+            requestIntervalCounts[cron.interval] = 1; } else {
+            requestIntervalCounts[cron.interval] += 1;
+          }
         }
         setChartData([
-          { type: "GET", quantity: requestTypeCounts['get'] },
-          { type: "POST", quantity: requestTypeCounts['post'] },
-          { type: "DELETE", quantity: requestTypeCounts['delete'] },
-          { type: "PUT", quantity: requestTypeCounts['put'] },
-          { type: "PATCH", quantity: requestTypeCounts['patch'] },
-          { type: "HEAD", quantity: requestTypeCounts['head'] },
-          { type: "OPTIONS", quantity: requestTypeCounts['options'] },
-          { type: "CONNECT", quantity: requestTypeCounts['connect'] },
+          { type: "GET", quantity: requestTypeCounts['get'] }, { type: "POST", quantity: requestTypeCounts['post'] },
+          { type: "DELETE", quantity: requestTypeCounts['delete'] }, { type: "PUT", quantity: requestTypeCounts['put'] },
+          { type: "PATCH", quantity: requestTypeCounts['patch'] }, { type: "HEAD", quantity: requestTypeCounts['head'] },
+          { type: "OPTIONS", quantity: requestTypeCounts['options'] }, { type: "CONNECT", quantity: requestTypeCounts['connect'] },
           { type: "TRACE", quantity: requestTypeCounts['trace'] }
+        ]);
+        setChartData2([
+          { type: "daily", quantity: requestIntervalCounts['daily'] }, { type: "weekly", quantity: requestIntervalCounts['weekly'] },
+          { type: "hourly", quantity: requestIntervalCounts['hourly'] }, { type: "single", quantity: requestIntervalCounts['single'] }
         ]);
 
         setData(result);
@@ -129,11 +133,25 @@ const ListComponent = ({id}: {id: number}) => {
     { type: "CONNECT", quantity: 0 },
     { type: "TRACE", quantity: 0 }
   ]);
+  const requestIntervalCounts: Record<string, number> = {daily: 0, weekly: 0, hourly: 0, single: 0};
+  const [chartData2, setChartData2] = useState([
+    { type: "daily", quantity: 0 },
+    { type: "weekly", quantity: 0 },
+    { type: "hourly", quantity: 0 },
+    { type: "single", quantity: 0 }
+  ]);
 
   const chartConfig = {
     quantity: {
       label: "Quantity",
       color: "hsl(var(--chart-1))",
+    },
+  } satisfies ChartConfig
+
+  const chartConfig2 = {
+    quantity: {
+      label: "Quantity",
+      color: "hsl(var(--chart-2))",
     },
   } satisfies ChartConfig
 
@@ -232,7 +250,7 @@ const ListComponent = ({id}: {id: number}) => {
                         </Label>
                         <Input
                           id="url"
-                          defaultValue="https://cronize.mtlh.dev/api/hello"
+                          defaultValue="https://httpbin.org/get"
                         />
                       </div>
                       <div className="flex items-center gap-4">
@@ -299,7 +317,7 @@ const ListComponent = ({id}: {id: number}) => {
               </Dialog>
               </TabsContent>
               <TabsContent value="stats">
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <Card>
                     <CardHeader>
                       <CardTitle>Request Type Breakdown</CardTitle>
@@ -318,11 +336,68 @@ const ListComponent = ({id}: {id: number}) => {
                         <PolarGrid />
                         <Radar
                           dataKey="quantity"
-                          fill="var(--color-chart-4)"
+                          className="fill-orange-400"
                           fillOpacity={0.6}
                         />
                       </RadarChart>
                     </ChartContainer>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Request Interval Breakdown</CardTitle>
+                      <CardDescription>
+                        The % of cronjobs that are of each interval.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-1 pb-0">
+                      <ChartContainer config={chartConfig2}>
+                        <BarChart
+                          accessibilityLayer
+                          data={chartData2}
+                          layout="vertical"
+                          margin={{
+                            right: 16,
+                          }}
+                        >
+                          <CartesianGrid horizontal={false} />
+                          <YAxis
+                            dataKey="type"
+                            type="category"
+                            tickLine={false}
+                            tickMargin={10}
+                            axisLine={false}
+                            tickFormatter={(value) => value.slice(0, 3)}
+                            hide
+                          />
+                          <XAxis dataKey="quantity" type="number" hide />
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent indicator="line" />}
+                          />
+                          <Bar
+                            dataKey="quantity"
+                            layout="vertical"
+                            className="fill-orange-400"
+                            radius={4}
+                          >
+                            <LabelList
+                              dataKey="type"
+                              position="insideLeft"
+                              offset={8}
+                              className="fill-white"
+                              fontSize={12}
+                            />
+                            <LabelList
+                              dataKey="quantity"
+                              position="right"
+                              offset={8}
+                              className="fill-foreground"
+                              fontSize={12}
+                            />
+                          </Bar>
+                        </BarChart>
+                      </ChartContainer>
                     </CardContent>
                   </Card>
                 </div>
