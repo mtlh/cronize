@@ -125,7 +125,16 @@ const SideNavbar: React.FC<SideNavbarProps> = ({ children, username }) => {
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="md:hidden flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+        <header className="md:hidden flex h-14 items-center justify-between gap-4 border-b bg-muted/40 p-4 lg:h-[60px] lg:px-6">
+          <a href="/" className="flex items-center gap-2 font-semibold">
+            <img
+              id="sidebar-logo"
+              src="/cronizelogo_light.png"
+              width="160"
+              height="auto"
+              alt="Cronize Logo"
+              />
+          </a>
           <Sheet>
             <SheetTrigger asChild>
               <Button

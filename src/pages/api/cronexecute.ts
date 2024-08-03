@@ -47,7 +47,6 @@ export const GET: APIRoute = async ({ request }) => {
                 } else {
                     console.error('Fetch request failed', error);
                 }
-                throw error;
             }
         }
         await fetchData()

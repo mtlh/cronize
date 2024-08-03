@@ -296,7 +296,13 @@ const ListComponent = ({id}: {id: number}) => {
                           Run Time (UTC)
                         </Label>
                         <input type="datetime-local" 
-                          value={selectedTime.toISOString().slice(0, 19).replace('T', ' ')} onChange={(e) => setSelectedTime(new Date(e.target.value))}
+                          value={selectedTime.toISOString().slice(0, 19).replace('T', ' ')}
+                          onChange={(e) => {
+                            const [datePart, timePart] = e.target.value.toString().replace('T', ' ').split(' ');
+                            const [year, month, day] = datePart.split('-').map(Number);
+                            const [hours, minutes, seconds] = timePart.split(':').map(Number);
+                            setSelectedTime(new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds)));
+                          }}
                           className='w-full p-2 border border-gray-300 rounded-md'
                           placeholder="Run time"
                          />
