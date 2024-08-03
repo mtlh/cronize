@@ -22,9 +22,11 @@ export const GET: APIRoute = async ({ request }) => {
         const timeoutId = setTimeout(() => abortController.abort(), 8000); // 8000 ms = 8 seconds
         const requestHeaders = new Headers();
         // iterate through array json object ([{key: value}, {key: value}])
-        JSON.parse(queue.rows[0].request_headers!.toString()).forEach((item: {key: string, value: string}) => {
-            requestHeaders.append(item.key.toString(), item.value.toString());
-        });
+        try {
+            JSON.parse(queue.rows[0].request_headers!.toString()).forEach((item: {key: string, value: string}) => {
+                requestHeaders.append(item.key.toString(), item.value.toString());
+            });
+        } catch {}
 
         async function fetchData() {
             try {
