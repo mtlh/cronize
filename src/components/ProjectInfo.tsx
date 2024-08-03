@@ -202,9 +202,9 @@ const ListComponent = ({id}: {id: number}) => {
                   <TableHeader>
                       <TableRow>
                         <TableHead className="w-[400px]">Cronjob Name</TableHead>
-                        <TableHead>Run Time</TableHead>
+                        <TableHead>Run Time (UTC)</TableHead>
                         <TableHead>Interval</TableHead>
-                        <TableHead>Last Run Time</TableHead>
+                        <TableHead>Last Run Time (UTC)</TableHead>
                         <TableHead >Last Run Status</TableHead>
                       </TableRow>
                   </TableHeader>
@@ -293,7 +293,7 @@ const ListComponent = ({id}: {id: number}) => {
                       </div>
                       <div className="flex items-center gap-4">
                         <Label htmlFor="daily_time" className="text-right w-32">
-                          Run Time
+                          Run Time (UTC)
                         </Label>
                         <input type="datetime-local" 
                           value={selectedTime.toISOString().slice(0, 19).replace('T', ' ')} onChange={(e) => setSelectedTime(new Date(e.target.value))}

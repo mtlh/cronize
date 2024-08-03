@@ -411,7 +411,7 @@ const ListComponent = ({id}: {id: number}) => {
                         }
                       </div>
                       <div className='md:col-span-2'>
-                        <Label>Run Time</Label>
+                        <Label>Run Time (UTC)</Label>
                         <input type="datetime-local" 
                           value={cronDailyTime.toISOString().slice(0, 19).replace('T', ' ')} onChange={(e) => setCronDailyTime(new Date(e.target.value))}
                           className='w-full text-lg p-2 border border-gray-300 rounded-md'
@@ -425,7 +425,7 @@ const ListComponent = ({id}: {id: number}) => {
                       <Table>
                           <TableHeader>
                               <TableRow>
-                                <TableHead>Run Time</TableHead>
+                                <TableHead>Run Time (UTC)</TableHead>
                                 <TableHead >Status</TableHead>
                               </TableRow>
                           </TableHeader>
