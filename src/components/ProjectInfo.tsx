@@ -17,6 +17,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 
 const ListComponent = ({id}: {id: number}) => {
@@ -26,6 +27,7 @@ const ListComponent = ({id}: {id: number}) => {
   const [error, setError] = useState(null);
   const [selectedInterval, setSelectedInterval] = useState('weekly');
   const [selectedRequestType, setSelectedRequestType] = useState('get');
+  const [selectedTime, setSelectedTime] = useState(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,7 +87,7 @@ const ListComponent = ({id}: {id: number}) => {
     formData.append('interval', selectedInterval);
     formData.append('request_type', selectedRequestType);
     // @ts-ignore
-    formData.append('daily_time', document.getElementById('daily_time_date')?.value.toString() + ' ' + document.getElementById('daily_time_time')?.value.toString());
+    formData.append('daily_time', new Date(selectedTime).toISOString().slice(0, 19).replace('T', ' '));
     const request = await fetch('/api/addCron', {
       method: 'POST',
       body: formData,
@@ -200,7 +202,7 @@ const ListComponent = ({id}: {id: number}) => {
                   <TableHeader>
                       <TableRow>
                         <TableHead className="w-[400px]">Cronjob Name</TableHead>
-                        <TableHead>Start/Run Time</TableHead>
+                        <TableHead>Run Time</TableHead>
                         <TableHead>Interval</TableHead>
                         <TableHead>Last Run Time</TableHead>
                         <TableHead >Last Run Status</TableHead>
@@ -245,68 +247,59 @@ const ListComponent = ({id}: {id: number}) => {
                         />
                       </div>
                       <div className="flex items-center gap-4">
-                        <Label htmlFor="url" className="text-right w-32">
-                          Request URL
-                        </Label>
+                        <Label htmlFor="url" className="text-right w-32">URL</Label>
                         <Input
                           id="url"
                           defaultValue="https://httpbin.org/get"
                         />
                       </div>
                       <div className="flex items-center gap-4">
-                        <Label htmlFor="request_type" className="text-right w-32">
-                          Request Method
-                        </Label>
-                        <RadioGroup defaultValue={selectedRequestType} id="request_type" onValueChange={(value) => setSelectedRequestType(value)}>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="get" id="get" />
-                            <Label htmlFor="get">GET</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="post" id="post" />
-                            <Label htmlFor="post">POST</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="delete" id="delete" />
-                            <Label htmlFor="delete">DELETE</Label>
-                          </div>
-                        </RadioGroup>
+                        <Label htmlFor="request_type" className="text-right w-32">Method</Label>
+                        <Select defaultValue={selectedRequestType} onValueChange={(value) => setSelectedRequestType(value)}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a request type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="get">GET</SelectItem>
+                                <SelectItem value="post">POST</SelectItem>
+                                <SelectItem value="put">PUT</SelectItem>
+                                <SelectItem value="delete">DELETE</SelectItem>
+                                <SelectItem value="patch">PATCH</SelectItem>
+                                <SelectItem value="connect">CONNECT</SelectItem>
+                                <SelectItem value="head">HEAD</SelectItem>
+                                <SelectItem value="options">OPTIONS</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
                       </div>
                       <div className="flex items-center gap-4">
                         <Label htmlFor="interval" className="text-right w-32">
                           Interval
                         </Label>
-                        <RadioGroup defaultValue={selectedInterval} id="interval" onValueChange={(value) => setSelectedInterval(value)}>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="weekly" id="weekly" />
-                            <Label htmlFor="weekly">Weekly</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="daily" id="daily" />
-                            <Label htmlFor="daily">Daily</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="hourly" id="hourly" />
-                            <Label htmlFor="hourly">Hourly</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="single" id="single" />
-                            <Label htmlFor="single">One-off</Label>
-                          </div>
-                        </RadioGroup>
+                        <Select defaultValue={selectedInterval} onValueChange={(value) => setSelectedInterval(value)}>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select an interval" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="hourly">Hourly</SelectItem>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="single">One-off</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                        </Select>
                       </div>
                       <div className="flex items-center gap-4">
                         <Label htmlFor="daily_time" className="text-right w-32">
-                          Starting/Run Time
+                          Run Time
                         </Label>
-                        <input aria-label="Date" type="date" defaultValue={new Date().toISOString().split('T')[0]} id='daily_time_date' className="w-full rounded-md border-0 bg-transparent py-2 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-none" />
-                        <input
-                            aria-label="Time"
-                            type="time"
-                            defaultValue={new Date().toLocaleTimeString('en-UK', { hour12: false })}
-                            id='daily_time_time'
-                            className="w-full rounded-md border-0 bg-transparent py-2 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-0 focus:border-none"
-                          />                
+                        <input type="datetime-local" 
+                          value={selectedTime.toISOString().slice(0, 19).replace('T', ' ')} onChange={(e) => setSelectedTime(new Date(e.target.value))}
+                          className='w-full p-2 border border-gray-300 rounded-md'
+                          placeholder="Run time"
+                         />
                       </div>
                     </div>
                     <DialogFooter>

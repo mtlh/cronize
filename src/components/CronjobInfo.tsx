@@ -44,7 +44,12 @@ const ListComponent = ({id}: {id: number}) => {
         setCronRequestHeaders(JSON.parse(cronData?.request_headers?.toString() || '[]'));
         setCronRequestBody(cronData?.request_body);
         setCronInterval(cronData?.interval);
-        setCronDailyTime(cronData?.daily_time);
+        const [datePart, timePart] = cronData?.daily_time!.split(' ');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hours, minutes, seconds] = timePart.split(':').map(Number);
+        // Create a new Date object in UTC
+        const dateObjectUTC = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+        setCronDailyTime(dateObjectUTC);
         setCronLastRunStatus(cronData?.last_run_status);
         setCronLastRunTime(cronData?.last_run_time);
         setHistory(result.history);
@@ -72,7 +77,7 @@ const ListComponent = ({id}: {id: number}) => {
   const [cronRequestHeaders, setCronRequestHeaders] = useState<Array<{key: string, value: string}>>(JSON.parse(data?.request_headers?.toString() || '[]'));
   const [cronRequestBody, setCronRequestBody] = useState(data?.request_body);
   const [cronInterval, setCronInterval] = useState(data?.interval);
-  const [cronDailyTime, setCronDailyTime] = useState(data?.daily_time);
+  const [cronDailyTime, setCronDailyTime] = useState(new Date(data?.daily_time!));
   const [cronLastRunStatus, setCronLastRunStatus] = useState(data?.last_run_status);
   const [cronLastRunTime, setCronLastRunTime] = useState(data?.last_run_time);
 
@@ -92,7 +97,7 @@ const ListComponent = ({id}: {id: number}) => {
       formdata.append('request_body', '');
     }
     formdata.append('interval', cronInterval!.toString());
-    formdata.append('daily_time', cronDailyTime!.toString());
+    formdata.append('daily_time', new Date(cronDailyTime!).toISOString().slice(0, 19).replace('T', ' '));
     fetch('/api/updateCron', {
       method: 'POST',
       body: formdata,
@@ -328,7 +333,8 @@ const ListComponent = ({id}: {id: number}) => {
                                 <SelectItem value="options">OPTIONS</SelectItem>
                               </SelectGroup>
                             </SelectContent>
-                          </Select>}
+                          </Select>
+                          }
                       </div>
                       <div className='md:col-span-2'>
                         <Label>Request Headers</Label>
@@ -374,19 +380,43 @@ const ListComponent = ({id}: {id: number}) => {
                       </div>
                       <div className='md:col-span-2'>
                         <Label>Interval</Label>
-                        <Input
-                          value={cronInterval}
-                          onChange={(e) => setCronInterval(e.target.value)}
-                          placeholder="Interval"
-                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                        {cronInterval != undefined ?
+                          <Select defaultValue={cronInterval} onValueChange={(value) => setCronInterval(value)}>
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select an interval" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                              <SelectItem value="hourly">Hourly</SelectItem>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="single">One-off</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                          :
+                          <Select defaultValue="hourly" onValueChange={(value) => setCronRequestType(value)}>
+                            <SelectTrigger className="w-[200px]">
+                              <SelectValue placeholder="Select an interval" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                <SelectItem value="hourly">Hourly</SelectItem>
+                                <SelectItem value="daily">Daily</SelectItem>
+                                <SelectItem value="weekly">Weekly</SelectItem>
+                                <SelectItem value="single">One-off</SelectItem>
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        }
                       </div>
                       <div className='md:col-span-2'>
-                        <Label>Daily Time</Label>
-                        <Input
-                          value={cronDailyTime}
-                          onChange={(e) => setCronDailyTime(e.target.value)}
-                          placeholder="Daily Time"
-                          className='w-full text-lg p-2 border border-gray-300 rounded-md' />
+                        <Label>Run Time</Label>
+                        <input type="datetime-local" 
+                          value={cronDailyTime.toISOString().slice(0, 19).replace('T', ' ')} onChange={(e) => setCronDailyTime(new Date(e.target.value))}
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md'
+                          placeholder="Run time"
+                         />
                       </div>
                     </div>
                   </TabsContent>
