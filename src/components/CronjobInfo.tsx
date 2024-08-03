@@ -413,7 +413,13 @@ const ListComponent = ({id}: {id: number}) => {
                       <div className='md:col-span-2'>
                         <Label>Run Time (UTC)</Label>
                         <input type="datetime-local" 
-                          value={cronDailyTime.toISOString().slice(0, 19).replace('T', ' ')} onChange={(e) => setCronDailyTime(new Date(e.target.value))}
+                          value={cronDailyTime.toISOString().slice(0, 19).replace('T', ' ')} 
+                          onChange={(e) => {
+                            const [datePart, timePart] = e.target.value.toString().replace('T', ' ').split(' ');
+                            const [year, month, day] = datePart.split('-').map(Number);
+                            const [hours, minutes, seconds] = timePart.split(':').map(Number);
+                            setCronDailyTime(new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds)));
+                          }}
                           className='w-full text-lg p-2 border border-gray-300 rounded-md'
                           placeholder="Run time"
                          />
