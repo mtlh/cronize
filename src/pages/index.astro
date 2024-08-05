@@ -8,6 +8,8 @@ const data = Astro.locals
 // @ts-ignore
 const username: string | null = data.username
 
+const error = decodeURIComponent(new URLSearchParams(Astro.url.search).get('error') || '')
+
 ---
 
 <BaseLayout
@@ -18,6 +20,6 @@ const username: string | null = data.username
   <div class="container m-auto text-center bg-muted shadow-lg p-2">
     { username ? <h1>Welcome back, {username}! Go to your <a href="/profile" class="italic hover:underline">profile</a>.</h1> : <h1>Welcome to Cronize!</h1> }
   </div>
-  <LoginSignup client:load />
+  <LoginSignup client:load error={error} />
   <Footer />
 </BaseLayout>

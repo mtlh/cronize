@@ -1,6 +1,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs"
 
-export default function Component() {
+export default function Component({ error }: { error: string }) {
+
   return (
     <div className="w-full max-w-5xl p-4 m-auto mt-8 mb-8">
       <Tabs defaultValue="1">
@@ -13,17 +14,17 @@ export default function Component() {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="1">
-          <LoginForm />
+          <LoginForm error={error} />
         </TabsContent>
         <TabsContent value="2">
-          <SignupForm />
+          <SignupForm error={error} />
         </TabsContent>
       </Tabs>
     </div>
   )
 }
 
-function LoginForm() {
+function LoginForm({error}: {error: string}) {
   function DemoLogin() {
     var usernameInput = document.getElementById("email");
     var passwordInput = document.getElementById("password");
@@ -59,13 +60,14 @@ function LoginForm() {
                     <button onClick={DemoLogin} className="w-full bg-orange-700 hover:bg-orange-400 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">Demo User</button>
                 </div>
             </div>
+            { error ? <p className="text-red-500 font-semibold text-md">{ error }</p> : null }
         </div>
     </section>
   )
 }
 
 
-function SignupForm() {
+function SignupForm({error}: {error: string}) {
   return (
       <section className="pt-8">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
@@ -96,6 +98,7 @@ function SignupForm() {
                     </form>
                 </div>
             </div>
+            { error ? <p className="text-red-500 font-semibold text-md">{ error }</p> : null }
         </div>
     </section>
   ) 

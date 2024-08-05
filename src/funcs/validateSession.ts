@@ -12,7 +12,7 @@ export default async function validateSession(request: Request): Promise<UserSes
         const session = await connectdb().execute({
             sql: `SELECT User.username, User.id FROM Session JOIN User ON Session.user_id = User.id WHERE session_key = ?`,
             args: [decryptedSession]
-        })
+        });
 
         // console.log(session)
 

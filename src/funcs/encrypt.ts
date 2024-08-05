@@ -16,7 +16,7 @@ export async function encrypt(str: string): Promise<string> {
 // Check encrypted string using bcrypt
 export async function encryptCheck(str: string, hashedStr: string): Promise<boolean> {
     try {
-        const isMatch = await argon2.verify(hashedStr, str);
+        const isMatch = await argon2.verify(str, hashedStr);
         return isMatch;
     } catch (err) {
         return false;
@@ -25,13 +25,13 @@ export async function encryptCheck(str: string, hashedStr: string): Promise<bool
 
 // Encrypt with AES-GCM using a private key
 export async function encryptWithPrivateKey(data: string): Promise<string> {
-    return CryptoJS.AES.encrypt(data, import.meta.env.SESSION_KEY).toString();
+    return CryptoJS.AES.encrypt(data.toString(), import.meta.env.SESSION_KEY).toString();
 }
 
 
 // Decrypt with AES-GCM using a private key
 export async function decryptWithPrivateKey(encryptedData: string): Promise<string> {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, import.meta.env.SESSION_KEY);
+    const bytes = CryptoJS.AES.decrypt(encryptedData.toString(), import.meta.env.SESSION_KEY);
     return bytes.toString(CryptoJS.enc.Utf8);
 }
 

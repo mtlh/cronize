@@ -9,7 +9,7 @@ export default async function loginProcess( email: string, password: string): Pr
         args: [email]
     })
 
-    // console.log(isEmail)
+    console.log(isEmail)
 
     if (isEmail.rows.length === 0) {
         return ["0", "email does not exist"]
@@ -18,7 +18,7 @@ export default async function loginProcess( email: string, password: string): Pr
     // check password against database record
     const isPassValid = await encryptCheck(isEmail.rows[0].password!.toString(), password)
 
-    if (isPassValid) {
+    if (!isPassValid) {
         return ["0", "incorrect password"]
     } else {
         return [isEmail.rows[0].id!.toString(), "success"]

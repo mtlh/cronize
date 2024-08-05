@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     console.log(status, message)
 
     if (status === "0") {
-        return redirect('/')
+        return redirect('/?error=' + encodeURIComponent(message))
     } else {
 
         // create a new session
