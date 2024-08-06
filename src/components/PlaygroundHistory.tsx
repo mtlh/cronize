@@ -51,6 +51,11 @@ const ListComponent = () => {
       {error && <p>Error: {error}</p>}
       <ul className="min-h-52" id="playgroundHistory">
         {loading && <LoadingSpinnerPlaygroundHistoryContent />}
+        <li className="grid grid-cols-9 gap-x-4 gap-y-2">
+          <span className="font-mono font-normal text-sm col-span-6">URL</span>
+          <span className="font-mono font-normal">Status</span>
+          <span className="font-mono font-normal">Time (UTC)</span>
+        </li>
         {data.map((item) => (
           <li key={item.id} className="grid grid-cols-9 gap-x-4 gap-y-2">
             <span className="font-mono font-normal text-sm col-span-6">{item.url}</span>

@@ -45,7 +45,7 @@ const data: any = Astro.locals;
                 </Button>
               </form>
               <div class="mt-8 space-y-4">
-                <div class="bg-muted rounded-md p-4">
+                <div class="bg-muted rounded-md p-4 hidden" id="playgroundResponse">
                   <h2 class="text-lg font-medium mb-2 text-card-foreground">Response</h2>
                   <div class="text-sm text-muted-foreground">
                     <p class="mr-2 font-semibold text-lg">Status Code:
@@ -54,7 +54,7 @@ const data: any = Astro.locals;
                     </p>
                     <p class="mr-2 font-semibold text-lg">Response Body:
                       <br />
-                      <span class="font-mono font-normal text-sm" id="playgroundResponseBody"></span>
+                      <span class="font-mono font-normal text-sm overflow-x-auto break-words" id="playgroundResponseBody"></span>
                     </p>
                   </div>
                 </div>
@@ -84,6 +84,7 @@ const data: any = Astro.locals;
       // Set loading state to true
       // @ts-ignore
       document.getElementById("handlePlaygroundSubmit")!.disabled = true;
+      document.getElementById("playgroundResponse")!.classList.remove("hidden");
       document.getElementById("playgroundSubmitSpinner")!.classList.remove("hidden");
       document.getElementById("playgroundSubmitText")!.classList.add("hidden");
 
@@ -146,6 +147,10 @@ const data: any = Astro.locals;
       div.appendChild(spanStatus);
       div.appendChild(spanTime);
       li.appendChild(div);
-      ul.insertBefore(li, ul.firstChild);
+      if (ul.children.length > 1) {
+        ul.insertBefore(li, ul.children[1]);
+      } else {
+        ul.insertBefore(li, ul.firstChild);
+      }
     }
 </script>

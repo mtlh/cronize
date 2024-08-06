@@ -9,7 +9,7 @@ export default async function signupProcess( email: string, password: string, us
         args: [email]
     })
     if (isEmail.rows.length > 0) {
-        return ["0", "email exists"]
+        return ["0", "invalid email"]
     }
 
     // encrypt password
