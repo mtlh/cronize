@@ -3,6 +3,7 @@ import type { ProfileData } from "@/db/types";
 import { useEffect, useState } from "react";
 import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "./ui/table";
 import { LogOut } from "lucide-react";
+import { LoadingSpinnerProfileContent } from "./ui/loadingspinner";
 
 export default function ProfileMain({ username }: {username: string}) {
 
@@ -44,9 +45,7 @@ export default function ProfileMain({ username }: {username: string}) {
                                         {profile.cronjobs.length}
                                     </>
                                     :
-                                    <>
-                                        0
-                                    </>
+                                    <LoadingSpinnerProfileContent />
                                 }
                             </span>
                         </div>
@@ -62,10 +61,12 @@ export default function ProfileMain({ username }: {username: string}) {
                     <CardContent className="flex-1 p-4 m-auto">
                         <div className="flex flex-col gap-4 m-auto">
                             <span className="flex items-center gap-4 text-4xl m-auto">
-                                {profile.cronjobs &&
+                                {profile.cronjobs ?
                                     <>
                                         {new Set(profile.cronjobs.map(item => item.project_id)).size}
                                     </>
+                                    :
+                                    <LoadingSpinnerProfileContent />
                                 }
                             </span>
                         </div>
@@ -83,9 +84,9 @@ export default function ProfileMain({ username }: {username: string}) {
                             <TableHead >Status</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody>
-                        { profile.cronjobs && 
-                            <>
+                    { profile.cronjobs ?
+                        <>
+                            <TableBody>
                                 {profile.cronjobs.map((cron, index) => (
                                     <TableRow key={index}>
                                         <TableCell className="font-semibold">
@@ -102,9 +103,17 @@ export default function ProfileMain({ username }: {username: string}) {
                                         </TableCell>
                                     </TableRow>
                                 ))}
-                            </>
-                        }
-                    </TableBody>
+                            </TableBody>
+                        </>
+                        :
+                        <TableBody>
+                            <TableRow className="hover:bg-white">
+                                <TableCell colSpan={4} className="h-40">
+                                    <LoadingSpinnerProfileContent />
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    }
                 </Table>
             </div>
             <div className="grid justify-items-stretch">
