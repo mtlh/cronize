@@ -2,12 +2,7 @@
 import SideNavbar from "../components/SideNavbar"
 import BaseLayout from "../layouts/BaseLayout.astro"
 import ThemeToggle from '../components/ThemeToggle.astro';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../components/ui/card"
+import ProfileMain from "../components/Profile"
 
 const data: any = Astro.locals;
 console.log(data)
@@ -22,26 +17,6 @@ console.log(data)
         <ThemeToggle />
     </div>
     <SideNavbar client:load username={data.username}>
-        <div class="grid items-center gap-4">
-            <h1 class="text-xl font-semibold md:text-2xl italic">Welcome {data.username}!</h1>
-            <div class="grid grid-cols-4 gap-4">
-                <Card>
-                    <CardHeader>
-                      <CardTitle>Projects</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <h2>4</h2>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader>
-                      <CardTitle>Cronjobs</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <h2>17</h2>
-                    </CardContent>
-                </Card>
-            </div>
-        </div>
+        <ProfileMain client:load username={data.username} />
     </SideNavbar>
 </BaseLayout>

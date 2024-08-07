@@ -11,33 +11,33 @@ import {
 } from "@/components/ui/navigation-menu"
 import { Github } from "lucide-react";
 
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "LinkedIn",
-    href: "https://www.linkedin.com/in/mtlh/",
-    description:
-      "Connect with me on LinkedIn.",
-  },
-  {
-    title: "GitHub",
-    href: "https://github.com/mtlh",
-    description:
-      "Check out my GitHub profile.",
-  },
-  {
-    title: "Portfolio",
-    href: "https://mtlh.dev",
-    description:
-      "Want to see some more projects?",
-  }
-]
+// const components: { title: string; href: string; description: string }[] = [
+//   {
+//     title: "LinkedIn",
+//     href: "https://www.linkedin.com/in/mtlh/",
+//     description:
+//       "Connect with me on LinkedIn.",
+//   },
+//   {
+//     title: "GitHub",
+//     href: "https://github.com/mtlh",
+//     description:
+//       "Check out my GitHub profile.",
+//   },
+//   {
+//     title: "Portfolio",
+//     href: "https://mtlh.dev",
+//     description:
+//       "Want to see some more projects?",
+//   }
+// ]
 
 export default function TopNavbar() {
   return (
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Documentation</NavigationMenuTrigger>
+          <NavigationMenuTrigger>External Links</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
               <li className="row-span-3">
@@ -59,19 +59,19 @@ export default function TopNavbar() {
                   </a>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="/docs" title="Introduction">
-                Re-usable components built using Radix UI and Tailwind CSS.
+              <ListItem href="https://www.linkedin.com/in/mtlh/" title="LinkedIn">
+                Connect with me on LinkedIn.
               </ListItem>
-              <ListItem href="/docs/installation" title="Installation">
-                How to install dependencies and structure your app.
+              <ListItem href="https://github.com/mtlh" title="GitHub">
+                Check out my GitHub profile.
               </ListItem>
-              <ListItem href="/docs/primitives/typography" title="Typography">
-                Styles for headings, paragraphs, lists...etc
+              <ListItem href="https://mtlh.dev" title="Portfolio">
+                Want to see some other projects?
               </ListItem>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
+        {/* <NavigationMenuItem>
           <NavigationMenuTrigger>Find me elsewhere</NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[200px] gap-3 p-4 md:w-[250px] md:grid-cols-1 lg:w-[300px] ">
@@ -86,8 +86,14 @@ export default function TopNavbar() {
               ))}
             </ul>
           </NavigationMenuContent>
-        </NavigationMenuItem>
+        </NavigationMenuItem> */}
       </NavigationMenuList>
+      <a
+        href="/login"
+        className="border-purple-600 border inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+      >
+        Get Started
+      </a>
     </NavigationMenu>
   )
 }

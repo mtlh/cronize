@@ -153,3 +153,16 @@ export interface CronjobExecutionQueue {
     id: number;
     cronjob_id: number;
 }
+
+export interface ProfileData {
+    cronjobs: [
+        {
+            id: number;
+            name: string;
+            project_id: number;
+            project_name: string;
+            last_run_time: string;
+            last_run_status: string;
+        }
+    ] | null;
+}

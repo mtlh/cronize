@@ -36,30 +36,37 @@ const ListComponent = ({id}: {id: number}) => {
           throw new Error('Failed to fetch data');
         }
         let result: {cron: Cronjob, history: CronjobHistory[]} = await response.json();
-        console.log(result);
-        const cronData = result.cron as Cronjob;
-        setCronName(cronData?.name);
-        setCronUrl(cronData?.url);
-        setCronRequestType(cronData?.request_type);
-        setCronRequestHeaders(JSON.parse(cronData?.request_headers?.toString() || '[]'));
-        setCronRequestBody(cronData?.request_body);
-        setCronInterval(cronData?.interval);
-        const [datePart, timePart] = cronData?.daily_time!.split(' ');
-        const [year, month, day] = datePart.split('-').map(Number);
-        const [hours, minutes, seconds] = timePart.split(':').map(Number);
-        // Create a new Date object in UTC
-        const dateObjectUTC = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-        setCronDailyTime(dateObjectUTC);
-        setCronLastRunStatus(cronData?.last_run_status);
-        setCronLastRunTime(cronData?.last_run_time);
-        setHistory(result.history);
-        setData(cronData);
-        // timeout 200ms
-        setTimeout(() => {
-          setLoading(false);
-          setSaveLoading(false);
-          setLoadingTest(false);
-        }, 200);
+
+        if (JSON.stringify(result) === '{}') {
+          window.location.href = '/profile';
+        } else {
+
+          console.log(result);
+          const cronData = result.cron as Cronjob;
+          setCronName(cronData?.name);
+          setCronUrl(cronData?.url);
+          setCronRequestType(cronData?.request_type);
+          setCronRequestHeaders(JSON.parse(cronData?.request_headers?.toString() || '[]'));
+          setCronRequestBody(cronData?.request_body);
+          setCronInterval(cronData?.interval);
+          const [datePart, timePart] = cronData?.daily_time!.split(' ');
+          const [year, month, day] = datePart.split('-').map(Number);
+          const [hours, minutes, seconds] = timePart.split(':').map(Number);
+          // Create a new Date object in UTC
+          const dateObjectUTC = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+          setCronDailyTime(dateObjectUTC);
+          setCronLastRunStatus(cronData?.last_run_status);
+          setCronLastRunTime(cronData?.last_run_time);
+          setHistory(result.history);
+          setData(cronData);
+          // timeout 200ms
+          setTimeout(() => {
+            setLoading(false);
+            setSaveLoading(false);
+            setLoadingTest(false);
+          }, 200);
+          
+        }
       } catch (err: any) {
         toast({
           title: "Get Cron Failed",
@@ -252,13 +259,13 @@ const ListComponent = ({id}: {id: number}) => {
                             </div>
                             :
                             <div className='flex flex-col gap-4'>
-                              <div className='flex flex-col gap-4'>
-                                <p className='flex gap-4'>URL:</p>
-                                <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testUrl}</p>
-                                <p className='flex gap-4'>Status:</p>
-                                <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testStatus}</p>
-                                <p className='flex gap-4'>Response:</p>
-                                <p className='p-4 bg-gray-200 rounded-md border border-gray-300'>{testResponse}</p>
+                              <div className='flex flex-col'>
+                                <p className='flex'>URL:</p>
+                                <p className='p-2 bg-gray-200 rounded-md border border-gray-300'>{testUrl}</p>
+                                <p className='flex pt-2'>Status:</p>
+                                <p className='p-2 bg-gray-200 rounded-md border border-gray-300'>{testStatus}</p>
+                                <p className='flex pt-2'>Response:</p>
+                                <p className='p-2 bg-gray-200 rounded-md border border-gray-300 overflow-x-auto break-words'>{testResponse}</p>
                               </div>
                             </div>
                           }

@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Header from '../components/Header.astro'
 import Footer from '../components/Footer.astro'
-import LoginSignup from '../components/LoginSignup'
 
 const data = Astro.locals
 // @ts-ignore
@@ -20,6 +19,46 @@ const error = decodeURIComponent(new URLSearchParams(Astro.url.search).get('erro
   <div class="container m-auto text-center bg-muted shadow-lg p-2">
     { username ? <h1>Welcome back, {username}! Go to your <a href="/profile" class="italic hover:underline">profile</a>.</h1> : <h1>Welcome to Cronize!</h1> }
   </div>
-  <LoginSignup client:load error={error} />
+  <main class="flex-1">
+    <section class="w-full py-10 md:py-14 lg:py-18">
+      <div class="container px-4 md:px-6">
+        <div class="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
+          <div class="flex flex-col justify-center space-y-4">
+            <div class="space-y-2">
+              <h1 class="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-orange-500">
+                Cronjob Management
+              </h1>
+              <p class="max-w-[600px] md:text-xl">
+                Streamline your scheduled tasks with our powerful cron job manager. Automate your workflows, monitor
+                job status, and receive alerts - all in one intuitive platform.
+              </p>
+            </div>
+            <div class="flex flex-col gap-2 min-[400px]:flex-row">
+              <a
+                href="/login"
+                class="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              >
+                Get Started
+              </a>
+              <a
+                href="https://www.github.com/mtlh/cronize"
+                target="_blank"
+                class="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+              >
+                Github Repo
+              </a>
+            </div>
+          </div>
+          <img
+            src="/cronjob_icon.svg"
+            width="200"
+            height="200"
+            alt="Hero"
+            class="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full lg:order-last lg:aspect-square"
+          />
+        </div>
+      </div>
+    </section>
+  </main>
   <Footer />
 </BaseLayout>

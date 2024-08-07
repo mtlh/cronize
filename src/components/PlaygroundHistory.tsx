@@ -24,7 +24,7 @@ const ListComponent = () => {
         if (result.length > 0) {
           setData(result);
         }
-        if (page === 1 && result.length > 0) {
+        if (result.length > 0) {
           setPageLimit(Math.max(Math.ceil(result[0].total_history_records/10), 1));
         } else {
           setPageLimit(1);
@@ -49,13 +49,16 @@ const ListComponent = () => {
   return (
     <div>
       {error && <p>Error: {error}</p>}
-      <ul className="min-h-52" id="playgroundHistory">
-        {loading && <LoadingSpinnerPlaygroundHistoryContent />}
-        <li className="grid grid-cols-9 gap-x-4 gap-y-2">
-          <span className="font-mono font-normal text-sm col-span-6">URL</span>
-          <span className="font-mono font-normal">Status</span>
-          <span className="font-mono font-normal">Time (UTC)</span>
-        </li>
+      <ul className="min-h-60" id="playgroundHistory">
+        {loading ?
+          <LoadingSpinnerPlaygroundHistoryContent />
+          :
+          <li className="grid grid-cols-9 gap-x-4 gap-y-2">
+            <span className="font-mono font-normal text-sm col-span-6">URL</span>
+            <span className="font-mono font-normal">Status</span>
+            <span className="font-mono font-normal">Time (UTC)</span>
+          </li>
+        }
         {data.map((item) => (
           <li key={item.id} className="grid grid-cols-9 gap-x-4 gap-y-2">
             <span className="font-mono font-normal text-sm col-span-6">{item.url}</span>
@@ -64,7 +67,7 @@ const ListComponent = () => {
           </li>
         ))}
       </ul>
-      <div>
+      <div className='pt-2'>
         <button onClick={handlePreviousPage} disabled={page === 1} className='p-2 mr-2 my-2 bg-black text-white rounded-md hover:bg-black/90 disabled:bg-black/50'>
           Back
         </button>

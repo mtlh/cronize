@@ -35,40 +35,46 @@ const ListComponent = ({id}: {id: number}) => {
       try {
         const response = await fetch(`/api/getProjectInfo?id=${id}`);
         if (!response.ok) {
+          window.location.href = '/profile';
           throw new Error('Failed to fetch data');
         }
         const result: ProjectInfo = await response.json();
         console.log(result);
-        
-        for (const cron of result?.cronjobs!) {
-          // count the number of cronjobs for each request type
-          if (requestTypeCounts[cron.request_type] === undefined) {
-            requestTypeCounts[cron.request_type] = 1; } else {
-            requestTypeCounts[cron.request_type] += 1;
-          }
-          if (requestIntervalCounts[cron.interval] === undefined) {
-            requestIntervalCounts[cron.interval] = 1; } else {
-            requestIntervalCounts[cron.interval] += 1;
-          }
-        }
-        setChartData([
-          { type: "GET", quantity: requestTypeCounts['get'] }, { type: "POST", quantity: requestTypeCounts['post'] },
-          { type: "DELETE", quantity: requestTypeCounts['delete'] }, { type: "PUT", quantity: requestTypeCounts['put'] },
-          { type: "PATCH", quantity: requestTypeCounts['patch'] }, { type: "HEAD", quantity: requestTypeCounts['head'] },
-          { type: "OPTIONS", quantity: requestTypeCounts['options'] }, { type: "CONNECT", quantity: requestTypeCounts['connect'] },
-          { type: "TRACE", quantity: requestTypeCounts['trace'] }
-        ]);
-        setChartData2([
-          { type: "daily", quantity: requestIntervalCounts['daily'] }, { type: "weekly", quantity: requestIntervalCounts['weekly'] },
-          { type: "hourly", quantity: requestIntervalCounts['hourly'] }, { type: "single", quantity: requestIntervalCounts['single'] }
-        ]);
 
-        setData(result);
+        if (JSON.stringify(result) === '{}') {
+          window.location.href = '/profile';
+        } else {
+          
+          for (const cron of result?.cronjobs!) {
+            // count the number of cronjobs for each request type
+            if (requestTypeCounts[cron.request_type] === undefined) {
+              requestTypeCounts[cron.request_type] = 1; } else {
+              requestTypeCounts[cron.request_type] += 1;
+            }
+            if (requestIntervalCounts[cron.interval] === undefined) {
+              requestIntervalCounts[cron.interval] = 1; } else {
+              requestIntervalCounts[cron.interval] += 1;
+            }
+          }
+          setChartData([
+            { type: "GET", quantity: requestTypeCounts['get'] }, { type: "POST", quantity: requestTypeCounts['post'] },
+            { type: "DELETE", quantity: requestTypeCounts['delete'] }, { type: "PUT", quantity: requestTypeCounts['put'] },
+            { type: "PATCH", quantity: requestTypeCounts['patch'] }, { type: "HEAD", quantity: requestTypeCounts['head'] },
+            { type: "OPTIONS", quantity: requestTypeCounts['options'] }, { type: "CONNECT", quantity: requestTypeCounts['connect'] },
+            { type: "TRACE", quantity: requestTypeCounts['trace'] }
+          ]);
+          setChartData2([
+            { type: "daily", quantity: requestIntervalCounts['daily'] }, { type: "weekly", quantity: requestIntervalCounts['weekly'] },
+            { type: "hourly", quantity: requestIntervalCounts['hourly'] }, { type: "single", quantity: requestIntervalCounts['single'] }
+          ]);
+
+          setData(result);
+          setLoading(false);
+        }
       } catch (err: any) {
         console.error(err);
         setError(err.message);
       }
-      setLoading(false);
     };
 
     fetchData();
@@ -165,7 +171,7 @@ const ListComponent = ({id}: {id: number}) => {
         </div>
         :
         <>
-        <div className="grid items-center gap-4 max-w-7xl mx-auto">
+        <div className="grid items-center gap-4 max-w-7xl mx-auto min-w-[60%]">
             <div className='flex justify-between'>
               <div className='grid grid-cols-3 gap-6 py-2 w-full'>
                 <h1 className="font-semibold italic text-4xl">{data?.name}</h1>

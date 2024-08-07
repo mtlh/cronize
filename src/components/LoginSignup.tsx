@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./ui/tabs"
 export default function Component({ error }: { error: string }) {
 
   return (
-    <div className="w-full max-w-5xl p-4 m-auto mt-8 mb-8">
+    <div className="w-full max-w-5xl p-4 m-auto mt-8 mb-8 min-h-[70vh]">
       <Tabs defaultValue="1">
         <TabsList className="flex gap-4 border rounded-lg border-gray-200 overflow-hidden dark:border-gray-800">
           <TabsTrigger value="1" className="flex-1">
