@@ -208,6 +208,7 @@ const ListComponent = ({id}: {id: number}) => {
                   <TableHeader>
                       <TableRow>
                         <TableHead className="w-[400px]">Cronjob Name</TableHead>
+                        <TableHead>Active</TableHead>
                         <TableHead>Run Time (UTC)</TableHead>
                         <TableHead>Interval</TableHead>
                         <TableHead>Last Run Time (UTC)</TableHead>
@@ -222,6 +223,7 @@ const ListComponent = ({id}: {id: number}) => {
                               {cron.name}
                             </a>
                           </TableCell>
+                          <TableCell>{cron.active ? 'Active' : 'Inactive'}</TableCell>
                           <TableCell>{cron.daily_time}</TableCell>
                           <TableCell>{cron.interval}</TableCell>
                           <TableCell>{cron.last_run_time || '-'}</TableCell>

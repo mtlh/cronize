@@ -25,6 +25,7 @@ export const GET: APIRoute = async ({ request }) => {
                     c.interval, 
                     c.daily_time, 
                     c.last_run_time, 
+                    c.active,
                     c.last_run_status 
                 FROM 
                     Cronjob c

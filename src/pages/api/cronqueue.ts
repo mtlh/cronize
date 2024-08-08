@@ -8,7 +8,7 @@ export const GET: APIRoute = async ({ request }) => {
 
     // return rows are all cronjobs with the same minute
     const minCrons = await connectdb().execute({
-        sql: `SELECT * FROM Cronjob WHERE strftime('%M', daily_time) = ?`,
+        sql: `SELECT * FROM Cronjob WHERE strftime('%M', daily_time) = ? AND active = 1`,
         args: [minute < 10 ? '0' + minute : '' + minute] // Format minute to two digits
     });
 

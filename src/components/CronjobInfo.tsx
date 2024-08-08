@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow, Table} from './ui/table';
+import { Switch } from './ui/switch';
 
 const ListComponent = ({id}: {id: number}) => {
   const { toast } = useToast()
@@ -49,6 +50,7 @@ const ListComponent = ({id}: {id: number}) => {
           setCronRequestHeaders(JSON.parse(cronData?.request_headers?.toString() || '[]'));
           setCronRequestBody(cronData?.request_body);
           setCronInterval(cronData?.interval);
+          setCronActive(parseInt(cronData?.active.toString() || '0') === 1);
           const [datePart, timePart] = cronData?.daily_time!.split(' ');
           const [year, month, day] = datePart.split('-').map(Number);
           const [hours, minutes, seconds] = timePart.split(':').map(Number);
@@ -87,6 +89,7 @@ const ListComponent = ({id}: {id: number}) => {
   const [cronDailyTime, setCronDailyTime] = useState(new Date(data?.daily_time!));
   const [cronLastRunStatus, setCronLastRunStatus] = useState(data?.last_run_status);
   const [cronLastRunTime, setCronLastRunTime] = useState(data?.last_run_time);
+  const [cronActive, setCronActive] = useState<boolean>(parseInt(data?.active.toString() || '0') === 1);
 
   const [history, setHistory] = useState<CronjobHistory[]>([]);
 
@@ -97,6 +100,7 @@ const ListComponent = ({id}: {id: number}) => {
     formdata.append('name', cronName!.toString());
     formdata.append('url', cronUrl!.toString());
     formdata.append('request_type', cronRequestType!.toString());
+    formdata.append('active', cronActive.toString());
     formdata.append('request_headers', JSON.stringify(cronRequestHeaders!));
     try {
       formdata.append('request_body', cronRequestBody!.toString());
@@ -287,6 +291,10 @@ const ListComponent = ({id}: {id: number}) => {
                   </TabsList>
                   <TabsContent value="details">
                     <div className='grid grid-cols-1 gap-2'>
+                      <div className='md:col-span-2 grid grid-cols-1'>
+                        <Label htmlFor="cron-active">Active</Label>
+                        <Switch id="cron-active" checked={cronActive} onCheckedChange={()=>{setCronActive(!cronActive)}} className="mt-2" />
+                      </div>
                       <div className='md:col-span-2'>
                         <Label>Name</Label>
                         <Input

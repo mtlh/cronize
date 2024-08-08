@@ -14,6 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
     const request_body = body.get('request_body')
     const interval = body.get('interval')
     const daily_time = body.get('daily_time')
+    const active = body.get('active')?.toString().toLowerCase() === 'true'
 
     const validSession = await validateSession(request)
 
@@ -34,8 +35,8 @@ export const POST: APIRoute = async ({ request }) => {
         } else {
 
             const project = await connectdb().execute({
-                sql: `UPDATE Cronjob SET url = ?, name = ?, interval = ?, daily_time = ?, request_type = ?, request_headers = ?, request_body = ? WHERE id = ?;`,
-                args: [url!.toString(), name!.toString(), interval!.toString(), daily_time!.toString(), request_type!.toString(), request_headers!.toString(), request_body!.toString(), parseInt(id!.toString())],
+                sql: `UPDATE Cronjob SET url = ?, name = ?, interval = ?, daily_time = ?, request_type = ?, request_headers = ?, request_body = ?, active = ? WHERE id = ?;`,
+                args: [url!.toString(), name!.toString(), interval!.toString(), daily_time!.toString(), request_type!.toString(), request_headers!.toString(), request_body!.toString(), active, parseInt(id!.toString())],
             })
             console.log(project)
             return new Response(null, {

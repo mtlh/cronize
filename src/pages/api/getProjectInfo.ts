@@ -28,7 +28,8 @@ export const GET: APIRoute = async ({ request }) => {
                 c.request_type,
                 c.daily_time, 
                 c.last_run_time, 
-                c.last_run_status
+                c.last_run_status,
+                c.active
             FROM 
                 Project p
             INNER JOIN
@@ -108,6 +109,7 @@ export const GET: APIRoute = async ({ request }) => {
                     last_run_time: cronjob.last_run_time?.toString() || '',
                     last_run_status: cronjob.last_run_status?.toString() || '',
                     request_type: cronjob.request_type?.toString() || '',
+                    active: parseInt(cronjob.active as string || '0') === 1,
                 });
             }
 

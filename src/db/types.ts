@@ -90,6 +90,7 @@ export interface Project {
 //     daily_time TEXT NOT NULL,
 //     last_run_time DATETIME,
 //     last_run_status TEXT,
+//     active BOOLEAN NOT NULL DEFAULT TRUE,
 //     FOREIGN KEY (project_id) REFERENCES Project(id) ON DELETE CASCADE
 // );
 
@@ -108,6 +109,7 @@ export interface Cronjob {
     daily_time: string;
     last_run_time: string;
     last_run_status: string;
+    active: boolean;
 }
 
 // CREATE TABLE IF NOT EXISTS CronjobHistory (
