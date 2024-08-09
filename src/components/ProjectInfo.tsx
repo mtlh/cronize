@@ -199,7 +199,7 @@ const ListComponent = ({id}: {id: number}) => {
             </div>
             <p className='text-lg'>{data?.description}</p>
             <Tabs defaultValue="crons">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-2 overflow-x-auto">
                 <TabsTrigger value="crons">Cronjobs</TabsTrigger>
                 <TabsTrigger value="stats">Statistics</TabsTrigger>
               </TabsList>
@@ -211,8 +211,8 @@ const ListComponent = ({id}: {id: number}) => {
                         <TableHead>Active</TableHead>
                         <TableHead>Run Time (UTC)</TableHead>
                         <TableHead>Interval</TableHead>
-                        <TableHead>Last Run Time (UTC)</TableHead>
-                        <TableHead >Last Run Status</TableHead>
+                        <TableHead className='hidden lg:table-cell m-auto text-center'>Last Run Time (UTC)</TableHead>
+                        <TableHead className='hidden lg:table-cell m-auto text-center' >Last Run Status</TableHead>
                       </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -226,8 +226,8 @@ const ListComponent = ({id}: {id: number}) => {
                           <TableCell>{cron.active ? 'Active' : 'Inactive'}</TableCell>
                           <TableCell>{cron.daily_time}</TableCell>
                           <TableCell>{cron.interval}</TableCell>
-                          <TableCell>{cron.last_run_time || '-'}</TableCell>
-                          <TableCell>{cron.last_run_status || '-'}</TableCell>
+                          <TableCell className='hidden lg:table-cell m-auto text-center'>{cron.last_run_time || '-'}</TableCell>
+                          <TableCell className='hidden lg:table-cell m-auto text-center'>{cron.last_run_status || '-'}</TableCell>
                       </TableRow>
                       ))}
                   </TableBody>

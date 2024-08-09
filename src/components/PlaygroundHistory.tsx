@@ -49,18 +49,18 @@ const ListComponent = () => {
   return (
     <div>
       {error && <p>Error: {error}</p>}
-      <ul className="min-h-60" id="playgroundHistory">
+      <ul className="min-h-60 overflow-x-auto" id="playgroundHistory">
         {loading ?
           <LoadingSpinnerPlaygroundHistoryContent />
           :
-          <li className="grid grid-cols-9 gap-x-4 gap-y-2">
+          <li className="grid md:grid-cols-9 grid-cols-1 gap-x-4 gap-y-2">
             <span className="font-mono font-normal text-sm col-span-6">URL</span>
             <span className="font-mono font-normal">Status</span>
             <span className="font-mono font-normal">Time (UTC)</span>
           </li>
         }
         {data.map((item) => (
-          <li key={item.id} className="grid grid-cols-9 gap-x-4 gap-y-2">
+          <li key={item.id} className="grid md:grid-cols-9 grid-cols-1 gap-x-4 gap-y-0 md:gap-y-2 my-4 md:my-0">
             <span className="font-mono font-normal text-sm col-span-6">{item.url}</span>
             { item.status.startsWith('2') ? <span className="text-green-500">{item.status}</span> : <span className="text-red-500">{item.status}</span> }
             <span className="italic col-span-2">{item.created_at}</span>

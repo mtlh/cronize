@@ -18,15 +18,16 @@ const optimizedImage = await getImage({
   class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
 >
   <div
-    class="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0"
+    class="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0 px-2"
   >
-    <div class="flex gap-6 md:gap-10">
+    <div class="flex gap-2 md:gap-10">
       <a href="/" class="flex items-center space-x-2">
         <img
           id="nav-logo"
           src={optimizedImage.src}
           width={optimizedImage.attributes.width}
           height={optimizedImage.attributes.height}
+          class="max-w-none w-32 md:w-3/5"
           alt="Cronize Logo"
         />
       </a>

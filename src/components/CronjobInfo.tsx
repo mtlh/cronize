@@ -236,16 +236,16 @@ const ListComponent = ({id}: {id: number}) => {
             </div>
             <Card className="w-full p-4 bg-white shadow-lg rounded-lg">
               <CardContent>
-                <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <div className='grid grid-cols-1 md:gap-6 md:grid-cols-2'>
                   {data?.created_at && (
-                    <p className='text-lg font-semibold mt-4 py-2'>
-                      Created - {new Date(data?.created_at).toLocaleString()}
+                    <p className='text-lg font-normal md:mt-4 py-2'>
+                      Created at {new Date(data?.created_at).toLocaleString()}
                     </p>
                   )}
-                  <div className='flex justify-end gap-6'>
+                  <div className='flex md:justify-end gap-6'>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button onClick={handleTestCron} className='mt-4 bg-black hover:bg-black/80 border text-white font-bold py-2 px-4 rounded w-28'><ShieldCheck /> Test</Button>
+                      <Button onClick={handleTestCron} className='md:mt-4 bg-black hover:bg-black/80 border text-white font-bold py-2 px-4 rounded w-28'><ShieldCheck /> Test</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[800px]">
                       <DialogTitle>Test Cronjob</DialogTitle>
@@ -278,9 +278,9 @@ const ListComponent = ({id}: {id: number}) => {
                     </DialogContent>
                   </Dialog>
                     {saveLoading ?
-                      <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28' disabled><LoaderCircle className='animate-spin' /></Button>
+                      <Button onClick={handleUpdateCron} className='md:mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28' disabled><LoaderCircle className='animate-spin' /></Button>
                       :
-                      <Button onClick={handleUpdateCron} className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28'><Save /> Save</Button>
+                      <Button onClick={handleUpdateCron} className='md:mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-28'><Save /> Save</Button>
                     }
                   </div>
                 </div>
