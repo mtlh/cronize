@@ -84,20 +84,20 @@ export const GET: APIRoute = async ({ request }) => {
         }
     }
 
-    if (doExec) {
-        await fetch( new URL('/api/cronexecute', import.meta.url).href )
-    } else {
-        const isQueued = await connectdb().execute(`SELECT COUNT(*) FROM CronjobExecutionQueue`)
-        if (isQueued.rows.length == 0) {
-            return new Response(JSON.stringify({
-                status: 'no-queue'
-            }), {
-                status: 200,
-            });
-        } else {
-            await fetch( new URL('/api/cronexecute', import.meta.url).href )
-        }
-    }
+    // if (doExec) {
+    //     await fetch( new URL('/api/cronexecute', import.meta.url).href )
+    // } else {
+    //     const isQueued = await connectdb().execute(`SELECT COUNT(*) FROM CronjobExecutionQueue`)
+    //     if (isQueued.rows.length == 0) {
+    //         return new Response(JSON.stringify({
+    //             status: 'no-queue'
+    //         }), {
+    //             status: 200,
+    //         });
+    //     } else {
+    //         await fetch( new URL('/api/cronexecute', import.meta.url).href )
+    //     }
+    // }
 
     return new Response(JSON.stringify({}), {
         status: 200,
