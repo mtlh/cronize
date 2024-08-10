@@ -66,9 +66,37 @@ export const GET: APIRoute = async ({ request }) => {
     }
 
     // if interval is one-off, check if the date, hour and minute matches then add to execution queue
+    if (minCrons.rows.length > 0) {
+        for (let i = 0; i < minCrons.rows.length; i++) {
+            if (minCrons.rows[i].interval === 'single'
+                && new Date().getHours() === parseInt(minCrons.rows[i].daily_time!.toString().split(' ')[1].split(':')[0])
+                && new Date().getDay() === new Date(minCrons.rows[i].daily_time!.toString()).getDay() 
+                && new Date(minCrons.rows[i].daily_time!.toString()).getMonth() === new Date().getMonth()
+                && new Date(minCrons.rows[i].daily_time!.toString()).getFullYear() === new Date().getFullYear()
+            ){
+                const queue = await connectdb().execute({
+                    sql: `INSERT INTO CronjobExecutionQueue (cronjob_id) VALUES (?);`,
+                    args: [minCrons.rows[i].id]
+                })
+                console.log(queue)
+                doExec = true;
+            }
+        }
+    }
 
     if (doExec) {
         fetch('/api/cronexecute')
+    } else {
+        const isQueued = await connectdb().execute(`SELECT COUNT(*) FROM CronjobExecutionQueue`)
+        if (isQueued.rows.length > 0) {
+            return new Response(JSON.stringify({
+                status: 'no-queue'
+            }), {
+                status: 200,
+            });
+        } else {
+            fetch('/api/cronexecute')
+        }
     }
 
     return new Response(JSON.stringify({}), {
