@@ -95,7 +95,7 @@ export const GET: APIRoute = async ({ request }) => {
                 status: 200,
             });
         } else {
-            fetch('/api/cronexecute')
+            fetch( new URL('/api/cronexecute', import.meta.url).href )
         }
     }
 
