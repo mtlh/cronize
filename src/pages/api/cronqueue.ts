@@ -88,7 +88,7 @@ export const GET: APIRoute = async ({ request }) => {
         fetch('/api/cronexecute')
     } else {
         const isQueued = await connectdb().execute(`SELECT COUNT(*) FROM CronjobExecutionQueue`)
-        if (isQueued.rows.length > 0) {
+        if (isQueued.rows.length == 0) {
             return new Response(JSON.stringify({
                 status: 'no-queue'
             }), {
