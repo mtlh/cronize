@@ -14,6 +14,8 @@ export const GET: APIRoute = async ({ request }) => {
 
     console.log(minCrons)
 
+    let doExec = false;
+
     // if interval is hourly and it matches the current hour, add to execution queue
     if (minCrons.rows.length > 0) {
         for (let i = 0; i < minCrons.rows.length; i++) {
@@ -23,6 +25,7 @@ export const GET: APIRoute = async ({ request }) => {
                     args: [minCrons.rows[i].id]
                 })
                 console.log(queue)
+                doExec = true;
             }
         }
     }
@@ -39,6 +42,7 @@ export const GET: APIRoute = async ({ request }) => {
                     args: [minCrons.rows[i].id]
                 })
                 console.log(queue)
+                doExec = true;
             }
         }
     }
@@ -56,11 +60,16 @@ export const GET: APIRoute = async ({ request }) => {
                     args: [minCrons.rows[i].id]
                 })
                 console.log(queue)
+                doExec = true;
             }
         }
     }
 
     // if interval is one-off, check if the date, hour and minute matches then add to execution queue
+
+    if (doExec) {
+        fetch('/api/cronexecute')
+    }
 
     return new Response(JSON.stringify({}), {
         status: 200,
