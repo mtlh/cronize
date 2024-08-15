@@ -234,7 +234,7 @@ const ListComponent = ({id}: {id: number}) => {
                 </button>
               </div>
             </div>
-            <Card className="w-full p-4 bg-white shadow-lg rounded-lg">
+            <Card className="w-full p-4 bg-white dark:bg-muted/40 shadow-lg rounded-lg">
               <CardContent>
                 <div className='grid grid-cols-1 md:gap-6 md:grid-cols-2'>
                   {data?.created_at && (
@@ -435,7 +435,7 @@ const ListComponent = ({id}: {id: number}) => {
                             const [hours, minutes, seconds] = timePart.split(':').map(Number);
                             setCronDailyTime(new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds)));
                           }}
-                          className='w-full text-lg p-2 border border-gray-300 rounded-md'
+                          className='w-full text-lg p-2 border border-gray-300 rounded-md dark:bg-background dark:text-white'
                           placeholder="Run time"
                          />
                       </div>

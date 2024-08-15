@@ -9,7 +9,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
-import { Github } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 
 // const components: { title: string; href: string; description: string }[] = [
 //   {
@@ -39,11 +39,11 @@ export default function TopNavbar() {
         <NavigationMenuItem>
           <NavigationMenuTrigger><span className="text-xs md:text-sm">External Links</span></NavigationMenuTrigger>
           <NavigationMenuContent>
-            <ul className="grid md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <li className="row-span-3">
+            <ul className="grid md:w-[400px] lg:w-[500px] lg:grid-cols-2">
+              <li className="row-span-3 p-4">
                 <NavigationMenuLink asChild>
                   <a
-                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-4 no-underline outline-none focus:shadow-md"
+                    className="flex h-full w-full select-none flex-col justify-end rounded-md bg-muted/50 hover:bg-muted/90 p-4 no-underline outline-none focus:shadow-md"
                     href="https://github.com/mtlh/cronize"
                     target="_blank"
                     referrerPolicy="no-referrer"
@@ -59,15 +59,24 @@ export default function TopNavbar() {
                   </a>
                 </NavigationMenuLink>
               </li>
-              <ListItem href="https://www.linkedin.com/in/mtlh/" title="LinkedIn">
-                Connect with me on LinkedIn.
-              </ListItem>
-              <ListItem href="https://github.com/mtlh" title="GitHub">
-                Check out my GitHub profile.
-              </ListItem>
-              <ListItem href="https://mtlh.dev" title="Portfolio">
-                Want to see some other projects?
-              </ListItem>
+              <li className="row-span-3 p-4">
+                <NavigationMenuLink asChild>
+                  <a
+                    className="flex h-full w-full select-none flex-col justify-end rounded-md hover:bg-muted/50 p-4 no-underline outline-none focus:shadow-md"
+                    href="https://www.linkedin.com/in/mtlh/"
+                    target="_blank"
+                    referrerPolicy="no-referrer"
+                  >
+                    <Linkedin className="h-6 w-6" />
+                    <div className="mb-2 mt-4 text-lg font-medium">
+                      LinkedIn
+                    </div>
+                    <p className="text-sm leading-tight text-muted-foreground">
+                      I'm always looking for new like-minded people to collaborate with.
+                    </p>
+                  </a>
+                </NavigationMenuLink>
+              </li>
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
